@@ -22,7 +22,7 @@ const HeaderRouteLink = ({ linkText, route }: Props) => {
       >
         {linkText}
       </Link>
-      <div className={`${isCurrentPage ? 'w-9' : 'w-0'} h-0.5 bg-yellow-600 rounded transition duration-700`}></div>
+      <div className={`${isCurrentPage ? 'w-9' : 'w-0'} h-0.5 bg-amber-600 rounded transition-all duration-75`}></div>
     </div>
   );
 };
