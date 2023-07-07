@@ -4,7 +4,7 @@ import cart from '@/public/cart--wheelbarrow.svg';
 
 const Header = () => {
   return (
-    <header className='w-full p-4 flex flex-row justify-between items-center shadow bg-gradient-to-r from-blue-100 from-5% to-85%'>
+    <header className='w-full p-4 flex flex-row justify-between items-center shadow bg-gradient-to-r from-blue-50 from-5% to-85%'>
       <Image 
         src={logo} 
         alt='Coyote Song Farm & Forest'

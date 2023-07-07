@@ -3,7 +3,7 @@ import HomePageColumn from '@/components/HomePageColumn';
 const Home = () => {
   
   return (
-    <main className=''>
+    <main className=' overflow-x-hidden overflow-y-auto'>
       <HomePageColumn />
     </main>
   );

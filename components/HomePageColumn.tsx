@@ -8,11 +8,12 @@ const HomePageColumn = async () => {
   const allHomePosts = await getAllHomePosts();
   
   return (
-    <div>
-      {allHomePosts.map(post => 
+    <div className='w-full p-7'>
+      {allHomePosts.map((post, index) => 
       <HomePageColumnPost 
         key={post.id}
         postData={post}
+        position={index % 2}
       />)}
     </div>
   );

@@ -8,6 +8,7 @@
 # testing
 /coverage
 docker-compose.db.yml
+public/test-images
 
 # next.js
 /.next/
