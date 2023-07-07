@@ -13,9 +13,9 @@ const HomePageColumnPost = ({ postData, position }: Props) => {
 
   return (
     <div className={`py-9 border-b-2 border-blue-50 flex ${positionStyle} justify-center items-center`}>
-      <div className='h-full max-w-lg mx-9 flex flex-col justify-center items-start'>
-        <h1 className='text-2xl font-medium mb-3'>{postData.title}</h1>
-        <p>{postData.content}</p>
+      <div className='h-full max-w-lg mx-12 flex flex-col justify-center items-start'>
+        <h1 className='text-2xl font-medium mb-3 border-b-2 border-black'>{postData.title}</h1>
+        <p className=''>{postData.content}</p>
         {postData.link && 
         <Link 
           href={''}
@@ -24,13 +24,14 @@ const HomePageColumnPost = ({ postData, position }: Props) => {
           Test Link
         </Link>}
       </div>
-      <div className='relative w-[32rem] aspect-square grid place-content-center overflow-hidden'>
+      <div className='relative w-[32rem] aspect-square grid place-content-center overflow-hidden rounded-2xl'>
         <Image 
           key={postData.images[0]}
           src={postData.images[0]} 
           alt=''
           fill={true}
-          objectFit='contain'
+          sizes=''
+          className=''
         />
       </div>
     </div>

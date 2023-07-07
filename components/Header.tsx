@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import logo from '@/public/logo--text-only.png';
 import cart from '@/public/cart--wheelbarrow.svg';
+import HeaderRouteLink from './HeaderRouteLink';
 
 const Header = () => {
   return (
@@ -12,11 +13,11 @@ const Header = () => {
         className='max-w-sm mx-3 pointer-events-none select-none'
       />
       <div className='flex flex-row'>
-        <h2 className='mx-4 font-semibold'>Home</h2>
-        <h2 className='mx-4 font-semibold'>Shop</h2>
-        <h2 className='mx-4 font-semibold'>Glamping</h2>
-        <h2 className='mx-4 font-semibold'>Blog</h2>
-        <h2 className='mx-4 font-semibold'>About</h2>
+        <HeaderRouteLink linkText='Home' route='/' />
+        <h2 className='mx-4 font-medium'>Shop</h2>
+        <h2 className='mx-4 font-medium'>Glamping</h2>
+        <HeaderRouteLink linkText='Blog' route='/blog' />
+        <h2 className='mx-4 font-medium'>About</h2>
       </div>
       <Image 
         src={cart}

@@ -1,8 +1,8 @@
 import './globals.css';
-import { Open_Sans } from 'next/font/google';
+import { Jost } from 'next/font/google';
 import Header from '@/components/Header';
 
-const inter = Open_Sans({ subsets: ['latin'] });
+const font = Jost({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Coyote Song Farm & Forest',
@@ -12,7 +12,7 @@ export const metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-blue-100`}>
+      <body className={`${font.className} bg-blue-100 overflow-x-hidden overflow-y-scroll`}>
         <Header />
         {children}
       </body>
