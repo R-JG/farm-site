@@ -13,7 +13,7 @@ const Header = () => {
         className='max-w-sm mx-3 pointer-events-none select-none'
       />
       <div className='flex flex-row'>
-        <HeaderRouteLink linkText='Home' route='/' />
+        <HeaderRouteLink linkText='News' route='/' />
         <h2 className='mx-4 font-medium'>Shop</h2>
         <h2 className='mx-4 font-medium'>Glamping</h2>
         <HeaderRouteLink linkText='Blog' route='/blog' />

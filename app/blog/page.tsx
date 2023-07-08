@@ -1,8 +1,10 @@
-
+import BlogPostList from '@/components/BlogPostList';
 
 const Blog = () => {
   return (
-    <main></main>
+    <main>
+      <BlogPostList />
+    </main>
   );
 };
 

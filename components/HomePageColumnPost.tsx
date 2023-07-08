@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { HomePost } from '@/utils/types';
 
-interface Props {
+type Props = {
   postData: HomePost,
   position: number
 };
@@ -24,14 +24,14 @@ const HomePageColumnPost = ({ postData, position }: Props) => {
           Test Link
         </Link>}
       </div>
-      <div className='relative w-[32rem] aspect-square grid place-content-center overflow-hidden rounded-2xl'>
+      <div className='relative h-[32rem] rounded-2xl aspect-square grid place-content-center overflow-hidden shadow-md'>
         <Image 
           key={postData.images[0]}
           src={postData.images[0]} 
           alt=''
           fill={true}
-          sizes=''
-          className=''
+          sizes='(max-width: 640px) 90vw, 40vw'
+          className='object-cover rounded-2xl'
         />
       </div>
     </div>
