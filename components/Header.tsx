@@ -17,7 +17,7 @@ const Header = () => {
         <h2 className='mx-4 font-medium'>Shop</h2>
         <h2 className='mx-4 font-medium'>Glamping</h2>
         <HeaderRouteLink linkText='Blog' route='/blog' />
-        <h2 className='mx-4 font-medium'>About</h2>
+        <HeaderRouteLink linkText='About' route='/about' />
       </div>
       <Image 
         src={cart}

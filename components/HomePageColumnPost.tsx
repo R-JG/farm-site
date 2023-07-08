@@ -24,7 +24,7 @@ const HomePageColumnPost = ({ postData, position }: Props) => {
           Test Link
         </Link>}
       </div>
-      <div className='relative h-[32rem] rounded-2xl aspect-square grid place-content-center overflow-hidden shadow-md'>
+      <div className='relative h-[32rem] aspect-square rounded-2xl grid place-content-center overflow-hidden shadow-md'>
         <Image 
           key={postData.images[0]}
           src={postData.images[0]} 
