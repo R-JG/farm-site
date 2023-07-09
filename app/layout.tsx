@@ -1,6 +1,7 @@
 import './globals.css';
 import { Jost } from 'next/font/google';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const font = Jost({ subsets: ['latin'] });
 
@@ -12,9 +13,10 @@ export const metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body className={`${font.className} bg-blue-100 overflow-x-hidden overflow-y-scroll`}>
+      <body className={`${font.className} min-h-screen bg-blue-100 flex flex-col justify-between overflow-x-hidden overflow-y-scroll`}>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

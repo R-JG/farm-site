@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import logo from '@/public/logo--text-only.png';
-import cart from '@/public/cart--wheelbarrow.svg';
+import logo from '@/public/static/logo--text-only.png';
+import cart from '@/public/static/icon--cart.svg';
 import HeaderRouteLink from './HeaderRouteLink';
 
 const Header = () => {

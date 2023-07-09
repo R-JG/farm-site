@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import lizAndJohn from '@/public/test-images/liz-and-john.webp';
+import lizAndJohn from '@/public/static/liz-and-john.webp';
 
 const About = () => {
   return (
@@ -19,14 +19,14 @@ const About = () => {
           </p>
         </div>
       </div>
-      <div className='w-[100vw] p-4 my-6 flex flex-row justify-center items-start bg-blue-200'>
+      <div className='w-[100vw] py-8 mt-6 flex flex-row justify-center items-start bg-blue-200'>
         <iframe 
           width='560' 
           height='315' 
           src='https://www.youtube.com/embed/Zqm1Hja2s70' 
           title='YouTube video player' 
           allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' 
-          className='m-4'
+          className='m-4 rounded-lg'
         >
         </iframe>
         <iframe 
@@ -35,7 +35,7 @@ const About = () => {
           src='https://www.youtube.com/embed/OQkVViOf42E' 
           title='YouTube video player' 
           allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' 
-          className='m-4'
+          className='m-4 rounded-lg'
         >
         </iframe>
       </div>
