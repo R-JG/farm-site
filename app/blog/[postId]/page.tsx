@@ -16,8 +16,8 @@ const BlogPostPage = async ({ params }: Props) => {
   if (!postData) return undefined;
 
   return (
-    <main className='p-12 flex flex-col justify-start items-center'>
-      <div className='w-[55vw] flex flex-col justify-start items-start'>
+    <main className='p-6 flex flex-col justify-start items-center bg-blue-200'>
+      <div className='w-[55vw] p-12 rounded-xl flex flex-col justify-start items-start bg-blue-100'>
         <h1 className='text-xl font-medium mb-2'>
           {postData.title}
         </h1>

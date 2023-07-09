@@ -12,7 +12,7 @@ const HomePageColumnPost = ({ postData, position }: Props) => {
   const positionStyle = (position === 0) ? 'flex-row' : 'flex-row-reverse';
 
   return (
-    <div className={`py-9 border-b-2 border-blue-50 flex ${positionStyle} justify-center items-center`}>
+    <div className={`py-9 border-t-2 border-blue-50 flex ${positionStyle} justify-center items-center`}>
       <div className='h-full max-w-lg mx-12 flex flex-col justify-center items-start'>
         <h1 className='text-2xl font-medium mb-3 border-b-2 border-black'>{postData.title}</h1>
         <p className=''>{postData.content}</p>

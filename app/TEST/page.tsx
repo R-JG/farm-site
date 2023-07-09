@@ -1,5 +1,5 @@
 import { prisma } from '@/prisma/database';
-import { NewHomePost, NewBlogPost } from '@/utils/types';
+import { NewHomePost, NewBlogPost, NewShopItem } from '@/utils/types';
 import TEST_AdminForms from '@/components/TEST_AdminForms';
 
 const TEST = () => {
@@ -22,11 +22,21 @@ const TEST = () => {
     };
   };
 
+  const createShopItem = async (newItemData: NewShopItem): Promise<void> => {
+    'use server';
+    try {
+      await prisma.shopItem.create({ data: newItemData });
+    } catch (error) {
+      console.error(error);
+    };
+  };
+
   return (
     <main>
       <TEST_AdminForms 
         createHomePost={createHomePost} 
         createBlogPost={createBlogPost}
+        createShopItem={createShopItem}
       />
     </main>
   );
