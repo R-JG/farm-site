@@ -15,7 +15,7 @@ const Header = () => {
       <div className='flex flex-row'>
         <HeaderRouteLink linkText='News' route='/' />
         <HeaderRouteLink linkText='Shop' route='/shop' />
-        <h2 className='mx-4 font-medium'>Glamping</h2>
+        <HeaderRouteLink linkText='Glamping' route='/glamping' />
         <HeaderRouteLink linkText='Blog' route='/blog' />
         <HeaderRouteLink linkText='About' route='/about' />
       </div>

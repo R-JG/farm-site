@@ -20,9 +20,9 @@ const NewsletterForm = () => {
       onSubmit={handleFormSubmit}
       className=''
     >
-      <h3 className='mb-1'>
+      <h1 className='mb-1'>
         Subscribe to our newsletter!
-      </h3>
+      </h1>
       <input
         type='email'
         placeholder='Email address' 
@@ -30,7 +30,7 @@ const NewsletterForm = () => {
         onChange={handleInputChange}
         className='p-1 mr-3 border-blue-100 border-2 rounded'
       />
-      <button className='p-2 bg-blue-200 rounded active:bg-blue-300 transition-colors'>
+      <button className='p-2 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'>
         Subscribe
       </button>
     </form>

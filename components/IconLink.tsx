@@ -11,12 +11,11 @@ const IconLink = ({ importedImage, alt, href }: Props) => {
     <a 
       href={href} 
       target='_blank'
-      className='w-fit h-fit'
     >
       <Image 
         src={importedImage} 
         alt={alt} 
-        className=' w-12 aspect-square'
+        className=' w-12 aspect-square hover:scale-105 transition-all'
       />
     </a>
   );

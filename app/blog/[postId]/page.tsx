@@ -21,7 +21,7 @@ const BlogPostPage = async ({ params }: Props) => {
         <h1 className='text-xl font-medium mb-2'>
           {postData.title}
         </h1>
-        <h3>By {postData.author}</h3>
+        <h2>By {postData.author}</h2>
         <h3 className='mb-8'>
           {postData.date}
         </h3>

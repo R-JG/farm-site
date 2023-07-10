@@ -13,7 +13,7 @@ const BlogPostPreview = ({ postData }: Props) => {
         className='w-full h-full p-8 flex flex-col justify-start items-start overflow-hidden '
       >
         <h1 className='text-xl font-medium line-clamp-1'>{postData.title}</h1>
-        <h4>{postData.date}</h4>
+        <h2>{postData.date}</h2>
         <p className='my-4 line-clamp-3'>
           {postData.content}
         </p>

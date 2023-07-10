@@ -20,8 +20,8 @@ const ShopItemPreview = ({ itemData }: Props) => {
             src={itemData.images[0]} 
             alt=''
             fill={true}
-            sizes='(max-width: 640px) 90vw, 40vw'
-            className='object-cover rounded-md'
+            sizes='(max-width: 640px) 40vw,20vw'
+            className='object-cover rounded-md shadow'
           />}
         </div>
         <h1 className='w-52 my-2 font-medium'>{itemData.name}</h1>
