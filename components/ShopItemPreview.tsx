@@ -12,7 +12,7 @@ const ShopItemPreview = ({ itemData }: Props) => {
     <div className=''>
       <Link 
         href={`/shop/${itemData.id}`}
-        className='w-fit mb-8 mx-14 flex flex-col justify-start items-start'
+        className='w-fit p-4 mb-8 mx-14 flex flex-col justify-start items-start hover:scale-105 transition-all'
       >
         <div className='w-52 aspect-square relative'>
           {(itemData.images.length > 0) &&

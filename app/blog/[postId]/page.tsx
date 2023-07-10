@@ -13,7 +13,7 @@ const BlogPostPage = async ({ params }: Props) => {
 
   const postData = await prisma.blogPost.findFirst({ where: { id: Number(params.postId) } });
 
-  if (!postData) return undefined;
+  if (!postData) return <div></div>;
 
   return (
     <main className='p-6 flex flex-col justify-start items-center bg-blue-200'>
@@ -25,7 +25,7 @@ const BlogPostPage = async ({ params }: Props) => {
         <h3 className='mb-8'>
           {postData.date}
         </h3>
-        <p className=' whitespace-pre-line'>
+        <p className='whitespace-pre-line'>
           {postData.content}
         </p>
         <hr className='w-[35vw] my-12 border-[0.07rem] border-slate-800 opacity-70 self-center' />
