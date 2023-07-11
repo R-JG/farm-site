@@ -10,7 +10,7 @@ const ShopItemList = async () => {
   const allShopItems = await getAllShopItems();
 
   return (
-    <div className='w-fit p-12 grid grid-cols-4'>
+    <div className='w-fit p-12 grid grid-cols-4 place-content-center'>
       {allShopItems.map(item => 
       <ShopItemPreview 
         key={item.id}

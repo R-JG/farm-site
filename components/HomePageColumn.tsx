@@ -8,7 +8,7 @@ const HomePageColumn = async () => {
   const allHomePosts = await getAllHomePosts();
   
   return (
-    <div className='w-full p-7'>
+    <div className='w-full p-7 flex flex-col justify-start items-center'>
       {allHomePosts.map((post, index) => 
       <HomePageColumnPost 
         key={post.id}

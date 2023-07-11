@@ -1,10 +1,10 @@
-import HomePageColumn from '@/components/HomePageColumn';
+import HomePageContent from '@/components/HomePageContent';
 
 const Home = () => {
   
   return (
     <main>
-      <HomePageColumn />
+      <HomePageContent />
     </main>
   );
 };

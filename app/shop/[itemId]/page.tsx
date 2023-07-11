@@ -24,7 +24,7 @@ const ShopItemPage = async ({ params }: Props) => {
           alt=''
           fill={true}
           sizes='(max-width: 640px) 90vw, 40vw'
-          className='object-cover rounded-md'
+          className='object-cover rounded-md shadow-md'
         />
       </div>
       <div className='max-w-lg mx-16'>
@@ -33,7 +33,7 @@ const ShopItemPage = async ({ params }: Props) => {
         </h1>
         <div className='w-full mb-8 flex flex-row justify-between items-center'>
           <span>{`$${itemData.price}`}</span>
-          <button className='p-2 bg-blue-200 rounded active:bg-blue-300 transition-colors'>
+          <button className='p-2 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'>
             Add to cart
           </button>
         </div>

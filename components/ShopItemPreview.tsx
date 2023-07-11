@@ -9,10 +9,10 @@ type Props = {
 
 const ShopItemPreview = ({ itemData }: Props) => {
   return (
-    <div className=''>
+    <div className='h-fit w-fit mb-6 mx-6'>
       <Link 
         href={`/shop/${itemData.id}`}
-        className='w-fit p-4 mb-8 mx-14 flex flex-col justify-start items-start hover:scale-105 transition-all'
+        className='w-fit p-4 flex flex-col justify-start items-start hover:scale-105 transition-all'
       >
         <div className='w-52 aspect-square relative'>
           {(itemData.images.length > 0) &&

@@ -9,14 +9,14 @@ type Props = {
 
 const ThumbnailGallery = ({ images }: Props) => {
 
-  const [selectedImage, setSelectedImage] = useState<number>(0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   return (
     <div className='w-[35vw] m-6 flex flex-col justify-start items-center'>
       <div className='w-full aspect-square m-1 relative shadow'>
         <Image 
-          key={images[selectedImage]}
-          src={images[selectedImage]}
+          key={images[selectedImageIndex]}
+          src={images[selectedImageIndex]}
           alt=''
           fill={true}
           sizes='(max-width: 640px) 90vw, 40vw'
@@ -27,7 +27,7 @@ const ThumbnailGallery = ({ images }: Props) => {
         {images.map((image, index) => 
         <div 
           key={index}
-          onClick={() => setSelectedImage(index)}
+          onClick={() => setSelectedImageIndex(index)}
           className='w-[20%] aspect-square m-1 relative opacity-90 shadow cursor-pointer hover:scale-105 transition-all'
         >
           <Image 
