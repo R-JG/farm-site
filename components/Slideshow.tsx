@@ -12,7 +12,7 @@ const Slideshow = async () => {
   return (
     <div 
       style={{ width: postWidthStyle }} 
-      className='relative h-fit m-9 bg-blue-200 rounded-2xl overflow-hidden'
+      className='relative m-9 bg-blue-200 bg-opacity-50 rounded-2xl overflow-hidden shadow'
     >
       <SlideshowInterface 
         postAmount={allPosts.length}

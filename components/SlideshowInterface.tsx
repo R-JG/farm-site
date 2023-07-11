@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import Image from 'next/image';
 import arrowBack from '@/public/static/arrow-left.svg';
 import arrowForward from '@/public/static/arrow-right.svg';
@@ -14,19 +14,30 @@ type Props = {
 const SlideshowInterface = ({ children, postAmount, postViewportWidth }: Props) => {
 
   const [currentPostIndex, setCurrentPostIndex] = useState<number>(0);
+  const [userHasNavigated, setUserHasNavigated] = useState<boolean>(false);
 
   const translateVWAmount = `${-(currentPostIndex * postViewportWidth)}vw`;
 
   const handleBackButton = (): void => {
     setCurrentPostIndex((currentPostIndex > 0) ? (currentPostIndex - 1) : (postAmount - 1));
+    if (!userHasNavigated) setUserHasNavigated(true);
   };
 
   const handleForwardButton = (): void => {
     setCurrentPostIndex((currentPostIndex < (postAmount - 1)) ? (currentPostIndex + 1) : 0);
+    if (!userHasNavigated) setUserHasNavigated(true);
   };
 
+  useEffect(() => {
+    const postChangeInterval = setInterval(() => 
+      setCurrentPostIndex(prevIndex => (prevIndex < (postAmount - 1)) ? (prevIndex + 1) : 0)
+    , 7000);
+    if (userHasNavigated) clearInterval(postChangeInterval);
+    return () => clearInterval(postChangeInterval);
+  }, [userHasNavigated, postAmount]);
+
   return (
-    <div className='w-full flex flex-col justify-start items-start'>
+    <div className='w-full h-fit flex flex-col justify-start items-start'>
       <button 
         onClick={handleBackButton} 
         className='group absolute left-0 z-10 h-full'
