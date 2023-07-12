@@ -13,7 +13,7 @@ const GlampingPage = () => {
       <ThumbnailGallery 
         images={[glampingOne, glampingTwo, glampingThree, glampingFour, glampingFive]}
       />
-      <div className='w-[35vw] m-12'>
+      <div className='w-[35vw] mx-10 mb-20'>
         <h1 className='text-2xl font-medium mb-4 '>
           Camp in comfort on the farm!
         </h1>

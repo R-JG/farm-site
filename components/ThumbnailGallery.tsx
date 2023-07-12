@@ -12,7 +12,7 @@ const ThumbnailGallery = ({ images }: Props) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   return (
-    <div className='w-[35vw] m-6 flex flex-col justify-start items-center'>
+    <div className='w-[35vw] m-8 flex flex-col justify-start items-center'>
       <div className='w-full aspect-square m-1 relative shadow'>
         <Image 
           key={images[selectedImageIndex]}
