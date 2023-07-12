@@ -27,6 +27,11 @@ const SlideshowInterface = ({ children, postAmount, postViewportWidth }: Props) 
     setCurrentPostIndex((currentPostIndex < (postAmount - 1)) ? (currentPostIndex + 1) : 0);
     if (!userHasNavigated) setUserHasNavigated(true);
   };
+  
+  const handleBulletClick = (bulletIndex: number): void => {
+    setCurrentPostIndex(bulletIndex);
+    if (!userHasNavigated) setUserHasNavigated(true);
+  };
 
   useEffect(() => {
     const postChangeInterval = setInterval(() => 
@@ -72,7 +77,8 @@ const SlideshowInterface = ({ children, postAmount, postViewportWidth }: Props) 
         {Array.from({ length: postAmount }).map((_, index) => 
         <div 
           key={index} 
-          className={`h-3 aspect-square m-2 rounded-2xl bg-blue-950 ${(index === currentPostIndex) ? 'opacity-80' : 'opacity-20'}`}
+          onClick={() => handleBulletClick(index)}
+          className={`h-3 aspect-square m-2 rounded-2xl bg-blue-950 ${(index === currentPostIndex) ? 'opacity-80' : 'opacity-20'} hover:scale-110 transition-transform cursor-pointer`}
         >
         </div>)}
       </div>

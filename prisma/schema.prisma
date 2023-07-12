@@ -23,6 +23,7 @@ model HomePost {
   content      String
   images       String[]
   link         String?
+  linkText     String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }

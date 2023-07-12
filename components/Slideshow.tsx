@@ -4,7 +4,9 @@ import SlideshowPost from './SlideshowPost';
 
 const Slideshow = async () => {
 
-  const allPosts = await prisma.homePost.findMany();
+  const allPosts = await prisma.homePost.findMany(
+    { orderBy: { createdAt: 'asc' } }
+  );
 
   const postViewportWidth = 90;
   const postWidthStyle = `${postViewportWidth}vw`;
@@ -12,7 +14,7 @@ const Slideshow = async () => {
   return (
     <div 
       style={{ width: postWidthStyle }} 
-      className='relative m-9 bg-blue-200 bg-opacity-50 rounded-2xl overflow-hidden shadow'
+      className='relative m-9 bg-blue-200 bg-opacity-50 rounded-2xl overflow-hidden shadow-md'
     >
       <SlideshowInterface 
         postAmount={allPosts.length}
