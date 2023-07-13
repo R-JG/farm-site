@@ -6,16 +6,16 @@ import { NewHomePost } from '@/utils/types';
 type HomePostUpload = Omit<NewHomePost, 'images'> & { imageFile: File | null };
 
 type Props = {
-  databaseService: (data: FormData) => Promise<{ success: boolean }> 
+  databaseService: (data: FormData) => Promise<{ success: boolean }>,
+  setPromptState: (params: { message: string, success: boolean } | null) => void
 };
 
-const UpdateNewsForm = ({ databaseService }: Props) => {
+const UpdateNewsForm = ({ databaseService, setPromptState }: Props) => {
 
   const baseInputValues = { title: '', content: '', link: '', linkText: '', imageFile: null };
 
   const [inputValues, setInputValues] = useState<HomePostUpload>(baseInputValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [promptMessage, setPromptMessage] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,18 +38,15 @@ const UpdateNewsForm = ({ databaseService }: Props) => {
     Object.entries(inputValues).forEach(([k, v]) => formData.append(k, v ?? ''));
     setIsSubmitting(true);
     try {
-      const result = await databaseService(formData);
-      console.log(result);
-      /*
-      if (success) {
-        setPromptMessage('Successfully created a post');
+      const response = await databaseService(formData);
+      if (response.success) {
+        setPromptState({ message: 'Successfully created a new post', success: true });
       } else {
         throw new Error('Server Error');
       };
-      */
     } catch (error) {
       console.error(error);
-      setPromptMessage('Post creation was unsuccessful');
+      setPromptState({ message: 'Post creation was unsuccessful', success: false });
     } finally {
       setInputValues(baseInputValues);
       setIsSubmitting(false);
@@ -59,59 +56,67 @@ const UpdateNewsForm = ({ databaseService }: Props) => {
 
   return (
     <div>
+      <h1 className='mb-2 text-lg font-medium'>
+        Create a new post for the news page:
+      </h1>
+      <div className='text-sm px-8 pb-4 max-w-lg'>
+        <h1>Note:</h1>
+        <p>The link route can either be a link to a page on this site or to an external site, or blank for no link. For an external site, just copy the whole url and paste it in. For a page on this site, you will need to copy only the portion of the url that looks something like this:  /shop  or  /blog  or  /glamping  and anything that comes after this part of the url, e.g. a shop item might look like:  /shop/5</p>
+        <p>The link text is just the text that the button displays.</p>
+      </div>
       <form 
         onSubmit={handleSubmit}
-        className='flex flex-row justify-start items-start'
+        className='p-8 border-2 border-black rounded-xl flex flex-col justify-start items-start'
       >
-        <label htmlFor='title'>Title</label>
-        <input
-          required 
-          id='title'
-          name='title'
-          value={inputValues.title}
-          onChange={handleInputChange} 
-        />
-        <label htmlFor='content'>Content</label>
-        <textarea 
-          required
-          id='content'
-          name='content'
-          value={inputValues.content}
-          onChange={handleInputChange} 
-        />
-        <label htmlFor='link'>Link Route</label>
-        <input 
-          id='link'
-          name='link'
-          value={inputValues.link ?? ''}
-          onChange={handleInputChange} 
-        />
-        <label htmlFor='linkText'>Link Text</label>
-        <input 
-          id='linkText'
-          name='linkText'
-          value={inputValues.linkText ?? ''}
-          onChange={handleInputChange} 
-        />
-        <label htmlFor='imageFile'>Upload Image</label>
-        <input 
-          required
-          type='file'
-          accept='.jpg,.jpeg,.png,.webp,.avif,.svg'
-          id='imageFile'
-          name='imageFile'
-          onChange={handleFileInputChange} 
-          ref={fileInputRef}
-        />
-        <button className='bg-slate-50 p-3 mx-5 rounded-lg'>
+        <label className='pb-4'>
+          Title:
+          <input
+            required 
+            name='title'
+            value={inputValues.title}
+            onChange={handleInputChange} 
+          />
+        </label>
+        <label className='pb-4'>
+          Content:
+          <textarea 
+            required
+            name='content'
+            value={inputValues.content}
+            onChange={handleInputChange} 
+          />
+        </label>
+        <label className='pb-4'>
+          Link Route:
+          <input 
+            name='link'
+            value={inputValues.link ?? ''}
+            onChange={handleInputChange} 
+          />
+        </label>
+        <label className='pb-4'>
+          Link Text:
+          <input 
+            name='linkText'
+            value={inputValues.linkText ?? ''}
+            onChange={handleInputChange} 
+          />
+        </label>
+        <label className='pb-4'>
+          Upload Image:
+          <input 
+            required
+            type='file'
+            accept='.jpg,.jpeg,.png,.webp,.avif,.svg'
+            name='imageFile'
+            onChange={handleFileInputChange} 
+            ref={fileInputRef}
+          />
+        </label>
+        <button className='p-2 m-4 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'>
           {isSubmitting ? 'Creating...' : 'Create'}
         </button>
       </form>
-      {promptMessage && 
-      <div className='m-4 bg-cyan-300'>
-        <p>{promptMessage}</p>
-        <button onClick={() => setPromptMessage('')}>Close</button>
-      </div>}
     </div>
   );
 };

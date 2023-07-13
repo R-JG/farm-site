@@ -43,7 +43,7 @@ const UpdateNewsPage = async () => {
   };
 
   return (
-    <main>
+    <main className='flex-grow'>
       <UpdateNewsInterface 
         allPosts={allPosts}
         createPost={createPost}

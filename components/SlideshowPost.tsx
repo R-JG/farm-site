@@ -16,6 +16,7 @@ const SlideshowPost = ({ postData }: Props) => {
         {postData.link && 
         <Link 
           href={postData.link}
+          target={(postData.link[0] === '/') ? '_self' : '_blank'}
           className='px-4 py-2 my-4 text-blue-50 bg-blue-900 bg-opacity-70 rounded active:bg-blue-300 hover:scale-105 transition-all'
         >
           {postData.linkText}
