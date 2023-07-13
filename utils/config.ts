@@ -1,0 +1,1 @@
+export const PATH_TO_ROOT = process.env.PATH_TO_ROOT;

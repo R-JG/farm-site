@@ -1,28 +1,53 @@
-import Link from 'next/link';
+import { File } from 'buffer';
+import fsp from 'fs/promises';
+import { prisma } from '@/prisma/database';
+import { NewHomePost } from '@/utils/types';
+import { PATH_TO_ROOT } from '@/utils/config';
+import UpdateNewsInterface from '@/components/UpdateNewsInterface';
 
-const UpdateNewsPage = () => {
+const UpdateNewsPage = async () => {
+
+  const allPosts = await prisma.homePost.findMany();
+
+  const createPost = async (postUploadData: FormData): Promise<{ success: boolean }> => {
+    'use server';
+    try {
+      const formDataArray = Array.from(postUploadData);
+      let newPost: NewHomePost = {
+        title: '',
+        content: '',
+        link: '',
+        linkText: '',
+        images: []
+      }; 
+      let imageFile: File | undefined;
+      formDataArray.forEach(([k, v]) => {
+        if (v instanceof File) {
+          imageFile = v;
+        } else if ((k in newPost) && (typeof v === 'string') && (k !== 'images')) {
+          newPost[k as keyof Omit<NewHomePost, 'images'>] = v;
+        };
+      });
+      if (imageFile) {
+        const imageStream = imageFile.stream();
+        const pathFromPublic = `/news-posts/${imageFile.name}`;
+        await fsp.writeFile(`${PATH_TO_ROOT}/public${pathFromPublic}`, imageStream);
+        newPost.images.push(pathFromPublic);
+      };
+      await prisma.homePost.create({ data: newPost });
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    };
+  };
+
   return (
     <main>
-      <div className='m-8 flex flex-row justify-center items-center'>
-        <Link 
-          href='/admin/update-news/create'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Create a News Post
-        </Link>
-        <Link 
-          href='/admin/update-news/edit'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Edit a News Post
-        </Link>        
-        <Link 
-          href='/admin/update-news/delete'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Delete a News Post
-        </Link>
-      </div>
+      <UpdateNewsInterface 
+        allPosts={allPosts}
+        createPost={createPost}
+      />
     </main>
   );
 };
