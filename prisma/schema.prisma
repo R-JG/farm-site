@@ -17,7 +17,7 @@ model ShopItem {
   updatedAt    DateTime  @updatedAt
 }
 
-model HomePost {
+model NewsPost {
   id           Int       @id @default(autoincrement())
   title        String
   content      String

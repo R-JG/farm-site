@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { HomePost } from '@/utils/types';
+import { NewsPost } from '@/utils/types';
 import UpdateNewsForm from './UpdateNewsForm';
 
 type Props = {
-  allPosts: HomePost[],
+  allPosts: NewsPost[],
   createPost: (postUploadData: FormData) => Promise<{ success: boolean }>,
   deletePost: (postId: number) => Promise<{ success: boolean }>
 };

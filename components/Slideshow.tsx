@@ -4,7 +4,7 @@ import SlideshowPost from './SlideshowPost';
 
 const Slideshow = async () => {
 
-  const allPosts = await prisma.homePost.findMany(
+  const allPosts = await prisma.newsPost.findMany(
     { orderBy: { createdAt: 'desc' } }
   );
 

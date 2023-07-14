@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
-import { NewHomePost } from '@/utils/types';
+import { NewNewsPost } from '@/utils/types';
 
-type HomePostUpload = Omit<NewHomePost, 'images'> & { imageFile: File | null };
+type NewsPostUpload = Omit<NewNewsPost, 'images'> & { imageFile: File | null };
 
 type Props = {
   databaseService: (data: FormData) => Promise<{ success: boolean }>,
@@ -14,7 +14,7 @@ const UpdateNewsForm = ({ databaseService, setPromptState }: Props) => {
 
   const baseInputValues = { title: '', content: '', link: '', linkText: '', imageFile: null };
 
-  const [inputValues, setInputValues] = useState<HomePostUpload>(baseInputValues);
+  const [inputValues, setInputValues] = useState<NewsPostUpload>(baseInputValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);

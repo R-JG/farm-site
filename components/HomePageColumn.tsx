@@ -2,14 +2,12 @@ import { prisma } from '@/prisma/database';
 import HomePageColumnPost from './HomePageColumnPost';
 
 const HomePageColumn = async () => {
- 
-  const getAllHomePosts = async () =>  await prisma.homePost.findMany();
 
-  const allHomePosts = await getAllHomePosts();
+  const allNewsPosts = await prisma.newsPost.findMany();
   
   return (
     <div className='w-full p-7 flex flex-col justify-start items-center'>
-      {allHomePosts.map((post, index) => 
+      {allNewsPosts.map((post, index) => 
       <HomePageColumnPost 
         key={post.id}
         postData={post}

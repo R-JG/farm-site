@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { HomePost } from '@/utils/types';
+import { NewsPost } from '@/utils/types';
 
 type Props = {
-  postData: HomePost,
+  postData: NewsPost,
   position: number
 };
 
