@@ -1,28 +1,87 @@
-import Link from 'next/link';
+import { File } from 'buffer';
+import fsp from 'fs/promises';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/prisma/database';
+import { NewBlogPost } from '@/utils/types';
+import { PATH_TO_ROOT } from '@/utils/config';
+import UpdateBlogInterface from '@/components/UpdateBlogInterface';
 
-const UpdateBlogPage = () => {
+const UpdateBlogPage = async () => {
+
+  const allBlogPosts = await prisma.blogPost.findMany({ 
+    orderBy: { createdAt: 'desc' } 
+  });
+
+  const createBlogPost = async (postRequestData: FormData): Promise<{ success: boolean }> => {
+    'use server';
+    try {
+      const formDataArray = Array.from(postRequestData);
+      let newPost: NewBlogPost = {
+        title: '',
+        content: '',
+        author: '',
+        date: '',
+        images: []
+      }; 
+      let imageFiles: File[] = [];
+      formDataArray.forEach(([k, v]) => {
+        if (v instanceof File) {
+          imageFiles.push(v);
+        } else if ((k in newPost) && (typeof v === 'string') && (k !== 'images')) {
+          newPost[k as keyof Omit<NewBlogPost, 'images'>] = v;
+        };
+      });
+      for (const imageFile of imageFiles) {
+        const imageStream = imageFile.stream();
+        const pathFromPublic = `/blog-posts/${imageFile.name}`;
+        await fsp.writeFile(`${PATH_TO_ROOT}/public${pathFromPublic}`, imageStream);
+        newPost.images.push(pathFromPublic);
+      };
+      await prisma.blogPost.create({ data: newPost });
+      revalidatePath('/update-blog');
+      revalidatePath('/blog');
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    };
+  };
+
+  const deleteBlogPost = async (postId: number): Promise<{ success: boolean }> => {
+    'use server';
+    try {
+      const postToDelete = await prisma.blogPost.findUnique({ where: { id: postId } });
+      if (!postToDelete) return { success: false };
+      const associatedImagePaths = postToDelete.images;
+      let imagesToDelete: string[] = [];
+      for (const path of associatedImagePaths) {
+        const postsSharingImage = await prisma.blogPost.findMany({ 
+          where: { images: { has: path } } 
+        });
+        if (postsSharingImage.length <= 1) {
+          imagesToDelete.push(path);
+        };
+      };
+      await prisma.blogPost.delete({ where: { id: postId } });
+      for (const path of imagesToDelete) {
+        await fsp.rm(`${PATH_TO_ROOT}/public${path}`); 
+      };
+      revalidatePath('/update-blog');
+      revalidatePath('/blog');
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    };
+  };
+
   return (
-    <main>
-      <div className='m-8 flex flex-row justify-center items-center'>
-        <Link 
-          href='/admin/update-blog/create'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Create a Blog Post
-        </Link>
-        <Link 
-          href='/admin/update-blog/edit'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Edit a Blog Post
-        </Link>        
-        <Link 
-          href='/admin/update-blog/delete'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Delete a Blog Post
-        </Link>
-      </div>
+    <main className='flex-grow'>
+      <UpdateBlogInterface 
+        allBlogPosts={allBlogPosts}
+        createBlogPost={createBlogPost}
+        deleteBlogPost={deleteBlogPost}
+      />
     </main>
   );
 };

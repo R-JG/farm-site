@@ -1,20 +1,20 @@
 'use client';
 
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
-import { NewShopItem } from '@/utils/types';
+import { NewBlogPost } from '@/utils/types';
 
-type ShopItemRequest = Omit<NewShopItem, 'images' | 'price'> & { imageFiles: File[], price: string };
+type BlogPostRequest = Omit<NewBlogPost, 'images'> & { imageFiles: File[] };
 
 type Props = {
   databaseService: (data: FormData) => Promise<{ success: boolean }>,
   setPromptState: (params: { message: string, success: boolean } | null) => void
 };
 
-const UpdateShopForm = ({ databaseService, setPromptState }: Props) => {
+const UpdateBlogForm = ({ databaseService, setPromptState }: Props) => {
 
-  const baseInputValues = { name: '', description: '', price: '', imageFiles: [] };
+  const baseInputValues = { title: '', content: '', author: '', date: '', imageFiles: [] };
 
-  const [inputValues, setInputValues] = useState<ShopItemRequest>(baseInputValues);
+  const [inputValues, setInputValues] = useState<BlogPostRequest>(baseInputValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,13 +50,13 @@ const UpdateShopForm = ({ databaseService, setPromptState }: Props) => {
     try {
       const response = await databaseService(formData);
       if (response.success) {
-        setPromptState({ message: 'Successfully created a new item', success: true });
+        setPromptState({ message: 'Successfully created a new post', success: true });
       } else {
         throw new Error('Server Error');
       };
     } catch (error) {
       console.error(error);
-      setPromptState({ message: 'Item creation was unsuccessful', success: false });
+      setPromptState({ message: 'Post creation was unsuccessful', success: false });
     } finally {
       setInputValues(baseInputValues);
       setIsSubmitting(false);
@@ -67,44 +67,51 @@ const UpdateShopForm = ({ databaseService, setPromptState }: Props) => {
   return (
     <div>
       <h1 className='mb-2 text-lg font-medium'>
-        Create a new item for the shop page:
+        Create a new blog post:
       </h1>
       <form 
         onSubmit={handleSubmit}
         className='p-8 border-2 border-black rounded-xl flex flex-col justify-start items-start'
       >
         <label className='pb-4'>
-          Name:
+          Title:
           <input
             required 
-            name='name'
-            value={inputValues.name}
+            name='title'
+            value={inputValues.title}
             onChange={handleInputChange} 
           />
         </label>
         <label className='pb-4'>
-          Description:
+          Content:
           <textarea 
             required
-            name='description'
-            value={inputValues.description}
+            name='content'
+            value={inputValues.content}
             onChange={handleInputChange} 
           />
         </label>
         <label className='pb-4'>
-          Price:
+          Author:
           <input 
             required
-            type='number'
-            name='price'
-            value={inputValues.price}
+            name='author'
+            value={inputValues.author}
+            onChange={handleInputChange} 
+          />
+        </label>
+        <label className='pb-4'>
+          Date:
+          <input 
+            required
+            name='date'
+            value={inputValues.date}
             onChange={handleInputChange} 
           />
         </label>
         <label className='pb-4'>
           Upload Images:
           <input 
-            required
             type='file'
             multiple
             accept='.jpg,.jpeg,.png,.webp,.avif,.svg'
@@ -121,4 +128,4 @@ const UpdateShopForm = ({ databaseService, setPromptState }: Props) => {
   );
 };
 
-export default UpdateShopForm;
+export default UpdateBlogForm;

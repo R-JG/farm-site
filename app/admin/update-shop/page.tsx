@@ -32,13 +32,11 @@ const UpdateShopPage = async () => {
           newItem[k as keyof Omit<NewShopItem, 'images' | 'price'>] = v;
         };
       });
-      if (imageFiles.length > 0) {
-        for (const imageFile of imageFiles) {
-          const imageStream = imageFile.stream();
-          const pathFromPublic = `/shop-items/${imageFile.name}`;
-          await fsp.writeFile(`${PATH_TO_ROOT}/public${pathFromPublic}`, imageStream);
-          newItem.images.push(pathFromPublic);
-        };
+      for (const imageFile of imageFiles) {
+        const imageStream = imageFile.stream();
+        const pathFromPublic = `/shop-items/${imageFile.name}`;
+        await fsp.writeFile(`${PATH_TO_ROOT}/public${pathFromPublic}`, imageStream);
+        newItem.images.push(pathFromPublic);
       };
       await prisma.shopItem.create({ data: newItem });
       revalidatePath('/update-shop');

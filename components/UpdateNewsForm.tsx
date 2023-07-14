@@ -3,7 +3,7 @@
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { NewNewsPost } from '@/utils/types';
 
-type NewsPostUpload = Omit<NewNewsPost, 'images'> & { imageFile: File | null };
+type NewsPostRequest = Omit<NewNewsPost, 'images'> & { imageFile: File | null };
 
 type Props = {
   databaseService: (data: FormData) => Promise<{ success: boolean }>,
@@ -14,7 +14,7 @@ const UpdateNewsForm = ({ databaseService, setPromptState }: Props) => {
 
   const baseInputValues = { title: '', content: '', link: '', linkText: '', imageFile: null };
 
-  const [inputValues, setInputValues] = useState<NewsPostUpload>(baseInputValues);
+  const [inputValues, setInputValues] = useState<NewsPostRequest>(baseInputValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);

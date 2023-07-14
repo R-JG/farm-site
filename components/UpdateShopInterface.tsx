@@ -70,7 +70,7 @@ const UpdateShopInterface = ({ allItems, createItem, deleteItem }: Props) => {
         onClick={handleCreateModeButton}
         className='p-2 m-12 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'
       >
-        {(interfaceMode !== 'create') ? 'Create New Item' : 'Back to Options'}
+        {(interfaceMode !== 'create') ? 'Create New Item' : 'Back to Current Items'}
       </button>
       {(interfaceMode === 'create') && 
       <div className='mb-12'>

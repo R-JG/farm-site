@@ -1,17 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { NewsPost } from '@/utils/types';
-import UpdateNewsForm from './UpdateNewsForm';
+import { BlogPost } from '@/utils/types';
+import UpdateBlogForm from './UpdateBlogForm';
 
 type Props = {
-  allPosts: NewsPost[],
-  createPost: (postUploadData: FormData) => Promise<{ success: boolean }>,
-  deletePost: (postId: number) => Promise<{ success: boolean }>
+  allBlogPosts: BlogPost[],
+  createBlogPost: (postRequestData: FormData) => Promise<{ success: boolean }>,
+  deleteBlogPost: (postId: number) => Promise<{ success: boolean }>
 };
 
-const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
-
+const UpdateBlogInterface = ({ allBlogPosts, createBlogPost, deleteBlogPost }: Props) => {
+    
   const [interfaceMode, setInterfaceMode] = useState<'create' | 'edit' | 'delete' | 'none'>('none');
   const [promptState, setPromptState] = useState<{ message: string, success: boolean } | null>(null);
   const [postToDeleteId, setPostToDeleteId] = useState<number | null>(null);
@@ -20,12 +20,6 @@ const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
   const handleCreateModeButton = (): void => {
     (interfaceMode !== 'create') ? setInterfaceMode('create') : setInterfaceMode('none')
   };
-
-  /*
-  const handleEditModeButton = (): void => {
-    (interfaceMode !== 'edit') ? setInterfaceMode('edit') : setInterfaceMode('none')
-  };
-  */
 
   const handleDeleteModeButton = (postId: number): void => {
     if (postIsBeingDeleted) return;
@@ -42,7 +36,7 @@ const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
     if (!postToDeleteId || postIsBeingDeleted) return;
     setPostIsBeingDeleted(true);
     try {
-      const response = await deletePost(postToDeleteId);
+      const response = await deleteBlogPost(postToDeleteId);
       if (response.success) {
         setPromptState({ message: 'Successfully deleted the post', success: true });
       } else {
@@ -80,16 +74,16 @@ const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
       </button>
       {(interfaceMode === 'create') && 
       <div className='mb-12'>
-        <UpdateNewsForm 
-          databaseService={createPost} 
+        <UpdateBlogForm 
+          databaseService={createBlogPost} 
           setPromptState={setPromptState}
         />
       </div>}
       {(interfaceMode !== 'create') && 
       <div className='py-4 border-t-2 border-black flex flex-col justify-start items-center'>
-        <p className='mb-4 text-xl font-medium underline'>Current posts on the news page:</p>
+        <p className='mb-4 text-xl font-medium underline'>Current blog posts:</p>
         <div className='flex flex-row justify-start items-start flex-wrap'>
-          {allPosts.map(post => 
+          {allBlogPosts.map(post => 
           <div 
             key={post.id}
             className=' max-w-sm p-4 m-4 border-black border-2 rounded-2xl'
@@ -136,4 +130,4 @@ const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
   );
 };
 
-export default UpdateNewsInterface;
+export default UpdateBlogInterface;
