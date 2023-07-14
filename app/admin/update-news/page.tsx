@@ -8,7 +8,9 @@ import UpdateNewsInterface from '@/components/UpdateNewsInterface';
 
 const UpdateNewsPage = async () => {
 
-  const allPosts = await prisma.homePost.findMany();
+  const allPosts = await prisma.homePost.findMany({ 
+    orderBy: { createdAt: 'asc' } 
+  });
 
   const createPost = async (postUploadData: FormData): Promise<{ success: boolean }> => {
     'use server';
@@ -44,8 +46,25 @@ const UpdateNewsPage = async () => {
     };
   };
 
-  const deletePost = (postId: number): Promise<{ success: boolean }> => {
-    
+  const deletePost = async (postId: number): Promise<{ success: boolean }> => {
+    'use server';
+    try {
+      const postToDelete = await prisma.homePost.findUnique({ where: { id: postId } });
+      if (!postToDelete) return { success: false };
+      const associatedImagePath = postToDelete.images[0];
+      const postsSharingImage = await prisma.homePost.findMany({ 
+        where: { images: { has: associatedImagePath } } 
+      });
+      await prisma.homePost.delete({ where: { id: postId } });
+      if (postsSharingImage.length <= 1) {
+        await fsp.rm(`${PATH_TO_ROOT}/public${associatedImagePath}`); 
+      };
+      revalidatePath('/');
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    };
   };
 
   return (

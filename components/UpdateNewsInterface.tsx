@@ -61,13 +61,13 @@ const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
   return (
     <div className='px-6 flex flex-col justify-start items-center'>
       {promptState && 
-      <div className={`absolute bottom-1 z-10 p-4 m-4 rounded-2xl flex flex-row justify-center items-center ${promptState.success ? 'border-green-600 border-4 bg-green-200' : 'border-red-600 border-4 bg-red-200'}`}>
+      <div className={`fixed bottom-32 z-10 p-4 m-4 rounded-2xl flex flex-row justify-center items-center ${promptState.success ? 'border-green-600 border-4 bg-green-200' : 'border-red-600 border-4 bg-red-200'}`}>
         <p className={`text-lg font-medium ${promptState.success ? 'text-green-600' : 'text-red-600'}`}>
           {promptState.message}
         </p>
         <button 
           onClick={() => setPromptState(null)}
-          className=' relative left-3 bottom-4 px-2 py-1 m-2 rounded-3xl bg-blue-200 hover:scale-110 transition-transform'
+          className={`relative left-3 bottom-4 px-1 m-2 rounded-3xl bg-white bg-opacity-70 hover:scale-110 transition-transform ${promptState.success ? 'text-green-600' : 'text-red-600'}`}
         >
           ✕
         </button>
