@@ -6,32 +6,62 @@ import UpdateNewsForm from './UpdateNewsForm';
 
 type Props = {
   allPosts: HomePost[],
-  createPost: (postUploadData: FormData) => Promise<{ success: boolean }>
+  createPost: (postUploadData: FormData) => Promise<{ success: boolean }>,
+  deletePost: (postId: number) => Promise<{ success: boolean }>
 };
 
-const UpdateNewsInterface = ({ allPosts, createPost }: Props) => {
+const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
 
-  const [mode, setMode] = useState<'create' | 'edit' | 'delete' | 'none'>('none');
+  const [interfaceMode, setInterfaceMode] = useState<'create' | 'edit' | 'delete' | 'none'>('none');
   const [promptState, setPromptState] = useState<{ message: string, success: boolean } | null>(null);
+  const [postToDeleteId, setPostToDeleteId] = useState<number | null>(null);
+  const [postIsBeingDeleted, setPostIsBeingDeleted] = useState<boolean>(false);
 
   const handleCreateModeButton = (): void => {
-    (mode !== 'create') ? setMode('create') : setMode('none')
+    (interfaceMode !== 'create') ? setInterfaceMode('create') : setInterfaceMode('none')
   };
 
+  /*
   const handleEditModeButton = (): void => {
-    (mode !== 'edit') ? setMode('edit') : setMode('none')
+    (interfaceMode !== 'edit') ? setInterfaceMode('edit') : setInterfaceMode('none')
+  };
+  */
+
+  const handleDeleteModeButton = (postId: number): void => {
+    if (postIsBeingDeleted) return;
+    setInterfaceMode('delete');
+    setPostToDeleteId(postId);
   };
 
-  const handleDeleteModeButton = (): void => {
-    (mode !== 'delete') ? setMode('delete') : setMode('none')
+  const handleCancelDeleteButton = (): void => {
+    setInterfaceMode('none');
+    setPostToDeleteId(null);
   };
 
-  console.log(promptState);
+  const handleDeletePostButton = async (): Promise<void> => {
+    if (!postToDeleteId || postIsBeingDeleted) return;
+    setPostIsBeingDeleted(true);
+    try {
+      const response = await deletePost(postToDeleteId);
+      if (response.success) {
+        setPromptState({ message: 'Successfully deleted the post', success: true });
+      } else {
+        throw new Error('Server Error');
+      };
+    } catch (error) {
+      console.error(error);
+      setPromptState({ message: 'There was an error in deleting the post', success: false });
+    } finally {
+      setPostToDeleteId(null);
+      setInterfaceMode('none');
+      setPostIsBeingDeleted(false);
+    };
+  };
 
   return (
     <div className='px-6 flex flex-col justify-start items-center'>
       {promptState && 
-      <div className={`absolute bottom-3 p-4 m-4 rounded-2xl flex flex-row justify-center items-center ${promptState.success ? 'border-green-600 border-4 bg-green-200' : 'border-red-600 border-4 bg-red-200'}`}>
+      <div className={`absolute bottom-1 z-10 p-4 m-4 rounded-2xl flex flex-row justify-center items-center ${promptState.success ? 'border-green-600 border-4 bg-green-200' : 'border-red-600 border-4 bg-red-200'}`}>
         <p className={`text-lg font-medium ${promptState.success ? 'text-green-600' : 'text-red-600'}`}>
           {promptState.message}
         </p>
@@ -46,16 +76,16 @@ const UpdateNewsInterface = ({ allPosts, createPost }: Props) => {
         onClick={handleCreateModeButton}
         className='p-2 m-12 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'
       >
-        {(mode !== 'create') ? 'Create New Post' : 'Back to Options'}
+        {(interfaceMode !== 'create') ? 'Create New Post' : 'Back to Options'}
       </button>
-      {(mode === 'create') && 
+      {(interfaceMode === 'create') && 
       <div className='mb-12'>
         <UpdateNewsForm 
           databaseService={createPost} 
           setPromptState={setPromptState}
         />
       </div>}
-      {(mode !== 'create') && 
+      {(interfaceMode !== 'create') && 
       <div className='py-4 border-t-2 border-black flex flex-col justify-start items-center'>
         <p className='mb-4 text-xl font-medium underline'>Current posts on the news page:</p>
         <div className='flex flex-row justify-start items-start flex-wrap'>
@@ -73,18 +103,31 @@ const UpdateNewsInterface = ({ allPosts, createPost }: Props) => {
               </p>
             </div>
             <div className='flex flex-row justify-center items-center'>
-              <button 
-                onClick={handleEditModeButton}
-                className='p-2 m-4 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'
-              >
-                Edit
-              </button>
-              <button 
-                onClick={handleDeleteModeButton}
+              {((interfaceMode === 'delete') && (post.id === postToDeleteId)) 
+              ? <div className='p-2 mt-4 rounded-2xl border-red-600 border-4'>
+                <p className='font-medium mx-4 text-red-600'>
+                  Delete this post?
+                </p>
+                {!postIsBeingDeleted && 
+                <button 
+                  onClick={handleCancelDeleteButton}
+                  className='p-2 m-4 bg-blue-200 rounded hover:scale-105 transition-transform'
+                >
+                  Cancel
+                </button>}
+                <button 
+                  onClick={handleDeletePostButton}
+                  className='p-2 m-4 bg-red-400 rounded hover:scale-105 transition-transform'
+                >
+                  {postIsBeingDeleted ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+              : <button 
+                onClick={() => handleDeleteModeButton(post.id)}
                 className='p-2 m-4 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'
               >
                 Delete
-              </button>
+              </button>}
             </div>
           </div>)}
         </div>

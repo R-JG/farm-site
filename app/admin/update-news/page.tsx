@@ -1,5 +1,6 @@
 import { File } from 'buffer';
 import fsp from 'fs/promises';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/prisma/database';
 import { NewHomePost } from '@/utils/types';
 import { PATH_TO_ROOT } from '@/utils/config';
@@ -35,6 +36,7 @@ const UpdateNewsPage = async () => {
         newPost.images.push(pathFromPublic);
       };
       await prisma.homePost.create({ data: newPost });
+      revalidatePath('/');
       return { success: true };
     } catch (error) {
       console.error(error);
@@ -42,11 +44,16 @@ const UpdateNewsPage = async () => {
     };
   };
 
+  const deletePost = (postId: number): Promise<{ success: boolean }> => {
+    
+  };
+
   return (
     <main className='flex-grow'>
       <UpdateNewsInterface 
         allPosts={allPosts}
         createPost={createPost}
+        deletePost={deletePost}
       />
     </main>
   );
