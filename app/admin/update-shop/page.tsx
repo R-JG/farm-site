@@ -1,28 +1,90 @@
-import Link from 'next/link';
+import { File } from 'buffer';
+import fsp from 'fs/promises';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/prisma/database';
+import { NewShopItem } from '@/utils/types';
+import { PATH_TO_ROOT } from '@/utils/config';
+import UpdateShopInterface from '@/components/UpdateShopInterface';
 
-const UpdateShopPage = () => {
+const UpdateShopPage = async () => {
+
+  const allItems = await prisma.shopItem.findMany({
+    orderBy: { createdAt: 'desc' } 
+  });
+
+  const createItem = async (itemRequestData: FormData): Promise<{ success: boolean }> => {
+    'use server';
+    try {
+      const formDataArray = Array.from(itemRequestData);
+      let newItem: NewShopItem = {
+        name: '',
+        description: '',
+        price: 0,
+        images: []
+      }; 
+      let imageFiles: File[] = [];
+      formDataArray.forEach(([k, v]) => {
+        if (v instanceof File) {
+          imageFiles.push(v);
+        } else if (k === 'price') {
+          newItem[k] = Number(v);
+        } else if ((k in newItem) && (typeof v === 'string') && (k !== 'images')) {
+          newItem[k as keyof Omit<NewShopItem, 'images' | 'price'>] = v;
+        };
+      });
+      if (imageFiles.length > 0) {
+        for (const imageFile of imageFiles) {
+          const imageStream = imageFile.stream();
+          const pathFromPublic = `/shop-items/${imageFile.name}`;
+          await fsp.writeFile(`${PATH_TO_ROOT}/public${pathFromPublic}`, imageStream);
+          newItem.images.push(pathFromPublic);
+        };
+      };
+      await prisma.shopItem.create({ data: newItem });
+      revalidatePath('/update-shop');
+      revalidatePath('/shop');
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    };
+  };
+
+  const deleteItem = async (itemId: number): Promise<{ success: boolean }> => {
+    'use server';
+    try {
+      const itemToDelete = await prisma.shopItem.findUnique({ where: { id: itemId } });
+      if (!itemToDelete) return { success: false };
+      const associatedImagePaths = itemToDelete.images;
+      let imagesToDelete: string[] = [];
+      for (const path of associatedImagePaths) {
+        const itemsSharingImage = await prisma.shopItem.findMany({ 
+          where: { images: { has: path } } 
+        });
+        if (itemsSharingImage.length <= 1) {
+          imagesToDelete.push(path);
+        };
+      };
+      await prisma.shopItem.delete({ where: { id: itemId } });
+      for (const path of imagesToDelete) {
+        await fsp.rm(`${PATH_TO_ROOT}/public${path}`); 
+      };
+      revalidatePath('/update-shop');
+      revalidatePath('/shop');
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    };
+  };
+
   return (
-    <main>
-      <div className='m-8 flex flex-row justify-center items-center'>
-        <Link 
-          href='/admin/update-shop/create'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Create a Shop Post
-        </Link>
-        <Link 
-          href='/admin/update-shop/edit'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Edit a Shop Post
-        </Link>        
-        <Link 
-          href='/admin/update-shop/delete'
-          className='p-2 m-4 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          Delete a Shop Post
-        </Link>
-      </div>
+    <main className='flex-grow'>
+      <UpdateShopInterface 
+        allItems={allItems}
+        createItem={createItem}
+        deleteItem={deleteItem}
+      />
     </main>
   );
 };

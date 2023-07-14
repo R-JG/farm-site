@@ -5,7 +5,7 @@ import SlideshowPost from './SlideshowPost';
 const Slideshow = async () => {
 
   const allPosts = await prisma.homePost.findMany(
-    { orderBy: { createdAt: 'asc' } }
+    { orderBy: { createdAt: 'desc' } }
   );
 
   const postViewportWidth = 90;

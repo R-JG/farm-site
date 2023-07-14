@@ -9,7 +9,7 @@ import UpdateNewsInterface from '@/components/UpdateNewsInterface';
 const UpdateNewsPage = async () => {
 
   const allPosts = await prisma.homePost.findMany({ 
-    orderBy: { createdAt: 'asc' } 
+    orderBy: { createdAt: 'desc' } 
   });
 
   const createPost = async (postUploadData: FormData): Promise<{ success: boolean }> => {
