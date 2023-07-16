@@ -12,9 +12,9 @@ const UpdateBlogPage = async () => {
 
   const session = await getServerSession(options);
 
-  const sessionUser = await prisma.user.findUnique({ 
-    where: { email: session?.user?.email ?? '' } 
-  });
+  const sessionUser = (session?.user?.email) ? await prisma.user.findUnique({ 
+    where: { email: session.user.email } 
+  }) : null;
 
   const allBlogPosts = await prisma.blogPost.findMany({ 
     orderBy: { createdAt: 'desc' } 
