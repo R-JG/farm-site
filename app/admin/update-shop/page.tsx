@@ -1,6 +1,8 @@
 import { File } from 'buffer';
 import fsp from 'fs/promises';
 import { revalidatePath } from 'next/cache';
+import { getServerSession } from 'next-auth/next';
+import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewShopItem } from '@/utils/types';
 import { PATH_TO_ROOT } from '@/utils/config';
@@ -8,12 +10,19 @@ import UpdateShopInterface from '@/components/UpdateShopInterface';
 
 const UpdateShopPage = async () => {
 
+  const session = await getServerSession(options);
+
+  const sessionUser = await prisma.user.findUnique({ 
+    where: { email: session?.user?.email ?? '' } 
+  });
+
   const allItems = await prisma.shopItem.findMany({
     orderBy: { createdAt: 'desc' } 
   });
 
   const createItem = async (itemRequestData: FormData): Promise<{ success: boolean }> => {
     'use server';
+    if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const formDataArray = Array.from(itemRequestData);
       let newItem: NewShopItem = {
@@ -50,6 +59,7 @@ const UpdateShopPage = async () => {
 
   const deleteItem = async (itemId: number): Promise<{ success: boolean }> => {
     'use server';
+    if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const itemToDelete = await prisma.shopItem.findUnique({ where: { id: itemId } });
       if (!itemToDelete) return { success: false };

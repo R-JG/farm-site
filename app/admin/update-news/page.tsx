@@ -1,6 +1,8 @@
 import { File } from 'buffer';
 import fsp from 'fs/promises';
 import { revalidatePath } from 'next/cache';
+import { getServerSession } from 'next-auth/next';
+import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewNewsPost } from '@/utils/types';
 import { PATH_TO_ROOT } from '@/utils/config';
@@ -8,12 +10,19 @@ import UpdateNewsInterface from '@/components/UpdateNewsInterface';
 
 const UpdateNewsPage = async () => {
 
+  const session = await getServerSession(options);
+
+  const sessionUser = await prisma.user.findUnique({ 
+    where: { email: session?.user?.email ?? '' } 
+  });
+
   const allPosts = await prisma.newsPost.findMany({ 
     orderBy: { createdAt: 'desc' } 
   });
 
   const createPost = async (postUploadData: FormData): Promise<{ success: boolean }> => {
     'use server';
+    if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const formDataArray = Array.from(postUploadData);
       let newPost: NewNewsPost = {
@@ -48,6 +57,7 @@ const UpdateNewsPage = async () => {
 
   const deletePost = async (postId: number): Promise<{ success: boolean }> => {
     'use server';
+    if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const postToDelete = await prisma.newsPost.findUnique({ where: { id: postId } });
       if (!postToDelete) return { success: false };

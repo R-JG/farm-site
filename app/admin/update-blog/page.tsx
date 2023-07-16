@@ -1,6 +1,8 @@
 import { File } from 'buffer';
 import fsp from 'fs/promises';
 import { revalidatePath } from 'next/cache';
+import { getServerSession } from 'next-auth/next';
+import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewBlogPost } from '@/utils/types';
 import { PATH_TO_ROOT } from '@/utils/config';
@@ -8,12 +10,19 @@ import UpdateBlogInterface from '@/components/UpdateBlogInterface';
 
 const UpdateBlogPage = async () => {
 
+  const session = await getServerSession(options);
+
+  const sessionUser = await prisma.user.findUnique({ 
+    where: { email: session?.user?.email ?? '' } 
+  });
+
   const allBlogPosts = await prisma.blogPost.findMany({ 
     orderBy: { createdAt: 'desc' } 
   });
 
   const createBlogPost = async (postRequestData: FormData): Promise<{ success: boolean }> => {
     'use server';
+    if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const formDataArray = Array.from(postRequestData);
       let newPost: NewBlogPost = {
@@ -49,6 +58,7 @@ const UpdateBlogPage = async () => {
 
   const deleteBlogPost = async (postId: number): Promise<{ success: boolean }> => {
     'use server';
+    if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const postToDelete = await prisma.blogPost.findUnique({ where: { id: postId } });
       if (!postToDelete) return { success: false };

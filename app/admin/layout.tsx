@@ -21,9 +21,9 @@ const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className='flex-grow'>
+    <div className='flex-grow flex flex-col justify-start items-center'>
+      <AdminHeader />
       <Provider>
-        <AdminHeader />
         {children}
       </Provider>
     </div>
