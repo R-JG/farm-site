@@ -1,5 +1,3 @@
-export const PATH_TO_ROOT = process.env.PATH_TO_ROOT;
-
 export const NEXTAUTH_URL = process.env.NEXTAUTH_URL ?? '';
 
 export const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET ?? '';

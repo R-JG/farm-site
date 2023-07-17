@@ -5,10 +5,12 @@ import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewBlogPost } from '@/utils/types';
-import { PATH_TO_ROOT } from '@/utils/config';
+import { resolve } from 'path';
 import UpdateBlogInterface from '@/components/UpdateBlogInterface';
 
 const UpdateBlogPage = async () => {
+
+  const rootDirPath = resolve(require.main?.filename ?? '');
 
   const session = await getServerSession(options);
 
@@ -43,7 +45,7 @@ const UpdateBlogPage = async () => {
       for (const imageFile of imageFiles) {
         const imageStream = imageFile.stream();
         const pathFromPublic = `/blog-posts/${imageFile.name}`;
-        await fsp.writeFile(`${PATH_TO_ROOT}/public${pathFromPublic}`, imageStream);
+        await fsp.writeFile(`${rootDirPath}/public${pathFromPublic}`, imageStream);
         newPost.images.push(pathFromPublic);
       };
       await prisma.blogPost.create({ data: newPost });
@@ -74,7 +76,7 @@ const UpdateBlogPage = async () => {
       };
       await prisma.blogPost.delete({ where: { id: postId } });
       for (const path of imagesToDelete) {
-        await fsp.rm(`${PATH_TO_ROOT}/public${path}`); 
+        await fsp.rm(`${rootDirPath}/public${path}`); 
       };
       revalidatePath('/update-blog');
       revalidatePath('/blog');

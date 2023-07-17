@@ -5,10 +5,12 @@ import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewNewsPost } from '@/utils/types';
-import { PATH_TO_ROOT } from '@/utils/config';
+import { resolve } from 'path';
 import UpdateNewsInterface from '@/components/UpdateNewsInterface';
 
 const UpdateNewsPage = async () => {
+
+  const rootDirPath = resolve(require.main?.filename ?? '');
 
   const session = await getServerSession(options);
 
@@ -43,7 +45,7 @@ const UpdateNewsPage = async () => {
       if (imageFile) {
         const imageStream = imageFile.stream();
         const pathFromPublic = `/news-posts/${imageFile.name}`;
-        await fsp.writeFile(`${PATH_TO_ROOT}/public${pathFromPublic}`, imageStream);
+        await fsp.writeFile(`${rootDirPath}/public${pathFromPublic}`, imageStream);
         newPost.images.push(pathFromPublic);
       };
       await prisma.newsPost.create({ data: newPost });
@@ -67,7 +69,7 @@ const UpdateNewsPage = async () => {
       });
       await prisma.newsPost.delete({ where: { id: postId } });
       if (postsSharingImage.length <= 1) {
-        await fsp.rm(`${PATH_TO_ROOT}/public${associatedImagePath}`); 
+        await fsp.rm(`${rootDirPath}/public${associatedImagePath}`); 
       };
       revalidatePath('/');
       return { success: true };

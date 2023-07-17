@@ -16,7 +16,6 @@ public/test-images
 
 # production
 /build
-/public/static
 /public/news-posts
 /public/blog-posts
 /public/shop-items

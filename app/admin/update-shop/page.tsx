@@ -5,10 +5,12 @@ import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewShopItem } from '@/utils/types';
-import { PATH_TO_ROOT } from '@/utils/config';
+import { resolve } from 'path';
 import UpdateShopInterface from '@/components/UpdateShopInterface';
 
 const UpdateShopPage = async () => {
+
+  const rootDirPath = resolve(require.main?.filename ?? '');
 
   const session = await getServerSession(options);
 
@@ -44,7 +46,7 @@ const UpdateShopPage = async () => {
       for (const imageFile of imageFiles) {
         const imageStream = imageFile.stream();
         const pathFromPublic = `/shop-items/${imageFile.name}`;
-        await fsp.writeFile(`${PATH_TO_ROOT}/public${pathFromPublic}`, imageStream);
+        await fsp.writeFile(`${rootDirPath}/public${pathFromPublic}`, imageStream);
         newItem.images.push(pathFromPublic);
       };
       await prisma.shopItem.create({ data: newItem });
@@ -75,7 +77,7 @@ const UpdateShopPage = async () => {
       };
       await prisma.shopItem.delete({ where: { id: itemId } });
       for (const path of imagesToDelete) {
-        await fsp.rm(`${PATH_TO_ROOT}/public${path}`); 
+        await fsp.rm(`${rootDirPath}/public${path}`); 
       };
       revalidatePath('/update-shop');
       revalidatePath('/shop');
