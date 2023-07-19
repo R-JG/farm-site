@@ -1,10 +1,10 @@
 generator client {
-  provider          = "prisma-client-js"
+  provider     = "prisma-client-js"
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
 }
 
 model ShopItem {
@@ -12,7 +12,7 @@ model ShopItem {
   name         String
   description  String
   price        Float
-  images       String[]
+  images       ShopItemImage[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
@@ -21,7 +21,7 @@ model NewsPost {
   id           Int       @id @default(autoincrement())
   title        String
   content      String
-  images       String[]
+  images       NewsPostImage[]
   link         String?
   linkText     String?
   createdAt    DateTime  @default(now())
@@ -33,10 +33,28 @@ model BlogPost {
   title        String
   author       String
   content      String
-  images       String[]
+  images       BlogPostImage[]
   date         String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+}
+
+model ShopItemImage {
+  id           String    @id
+  shopItemId   Int
+  shopItem     ShopItem  @relation(fields: [shopItemId], references: [id])
+}
+
+model NewsPostImage {
+  id           String    @id
+  newsPostId   Int
+  newsPost     NewsPost  @relation(fields: [newsPostId], references: [id])
+}
+
+model BlogPostImage {
+  id           String    @id
+  blogPostId   Int
+  blogPost     BlogPost  @relation(fields: [blogPostId], references: [id])
 }
 
 enum Role {
