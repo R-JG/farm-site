@@ -3,18 +3,28 @@
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { NewNewsPost } from '@/utils/types';
 
-type NewsPostRequest = Omit<NewNewsPost, 'images'> & { imageFile: File | null };
+type NewsPostRequest = Omit<NewNewsPost, 'images'>;
 
 type Props = {
+  publicUploadApiKey: string,
+  publicUploadUrl: string, 
+  createSignature: () => Promise<{ timestamp: number, signature: string }>,
   databaseService: (data: FormData) => Promise<{ success: boolean }>,
   setPromptState: (params: { message: string, success: boolean } | null) => void
 };
 
-const UpdateNewsForm = ({ databaseService, setPromptState }: Props) => {
+const UpdateNewsForm = ({ 
+  publicUploadApiKey, 
+  publicUploadUrl, 
+  createSignature, 
+  databaseService, 
+  setPromptState 
+  }: Props) => {
 
-  const baseInputValues = { title: '', content: '', link: '', linkText: '', imageFile: null };
+  const baseInputValues = { title: '', content: '', link: '', linkText: '' };
 
   const [inputValues, setInputValues] = useState<NewsPostRequest>(baseInputValues);
+  const [inputFiles, setInputFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,18 +37,53 @@ const UpdateNewsForm = ({ databaseService, setPromptState }: Props) => {
 
   const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (!e.currentTarget.files) return;
-    const imageFile = e.currentTarget.files[0];
-    setInputValues({ ...inputValues, imageFile });
+    const fileArray = Array.from(e.currentTarget.files);
+    setInputFiles(fileArray);
+  };
+
+  const uploadFiles = async () => {
+    let uploadRequests: Promise<Response>[] = [];
+    if (inputFiles.length > 0) {
+      const { timestamp, signature } = await createSignature();
+      for (const file of inputFiles) {
+        let cloudinaryFormData = new FormData();
+        cloudinaryFormData.append('api_key', publicUploadApiKey);
+        cloudinaryFormData.append('signature', signature);
+        cloudinaryFormData.append('timestamp', String(timestamp));
+        cloudinaryFormData.append('folder', 'farm-site');
+        cloudinaryFormData.append('file', file);
+        uploadRequests.push(
+          fetch(publicUploadUrl, { method: 'POST', body: cloudinaryFormData })
+        );
+      };
+    };
+    return Promise.all(uploadRequests);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (isSubmitting) return;
-    const formData = new FormData();
-    Object.entries(inputValues).forEach(([k, v]) => formData.append(k, v ?? ''));
     setIsSubmitting(true);
     try {
-      const response = await databaseService(formData);
+      const responseArray = await uploadFiles();
+      responseArray.forEach(response => {
+        if (!response.ok) throw new Error('not all images could be uploaded');
+      });
+      let imageIds: string[] = [];
+      await Promise.all(responseArray.map(response => new Promise((resolve, reject) => {
+        response.json().then(responseData => {
+          if ((typeof responseData === 'object') && ('public_id' in responseData)) {
+            imageIds.push(responseData.public_id);
+            resolve(undefined);
+          } else {
+            reject('public_id property is missing from the response data');
+          };
+        });
+      }))); 
+      let dbFormData = new FormData();
+      Object.entries(inputValues).forEach(([k, v]) => dbFormData.append(k, v ?? ''));
+      imageIds.forEach(id => dbFormData.append('imageIds', id));
+      const response = await databaseService(dbFormData);
       if (response.success) {
         setPromptState({ message: 'Successfully created a new post', success: true });
       } else {
@@ -108,6 +153,13 @@ const UpdateNewsForm = ({ databaseService, setPromptState }: Props) => {
             required
             type='file'
             accept='.jpg,.jpeg,.png,.webp,.avif,.svg'
+
+
+
+            multiple
+
+
+
             name='imageFile'
             onChange={handleFileInputChange} 
             ref={fileInputRef}

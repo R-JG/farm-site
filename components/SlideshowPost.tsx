@@ -23,14 +23,14 @@ const SlideshowPost = ({ postData }: Props) => {
         </Link>}
       </div>
       <div className='relative w-5/12 ml-6 mb-9 mt-3 aspect-square rounded grid place-content-center overflow-hidden'>
-        <Image 
+        {/*<Image 
           key={postData.images[0]}
           src={postData.images[0]} 
           alt=''
           fill={true}
           sizes='(max-width: 640px) 90vw, 40vw'
           className='object-cover rounded'
-        />
+        />*/<div>IMAGE TEMPORARILY DISABLED</div>}
       </div>
     </div>
   );

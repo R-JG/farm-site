@@ -5,12 +5,22 @@ import { NewsPost } from '@/utils/types';
 import UpdateNewsForm from './UpdateNewsForm';
 
 type Props = {
+  publicUploadApiKey: string,
+  publicUploadUrl: string, 
   allPosts: NewsPost[],
-  createPost: (postUploadData: FormData) => Promise<{ success: boolean }>,
-  deletePost: (postId: number) => Promise<{ success: boolean }>
+  createSignature: () => Promise<{ timestamp: number, signature: string }>,
+  createPost: (data: FormData) => Promise<{ success: boolean }>,
+  deletePost: any
 };
 
-const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
+const UpdateNewsInterface = ({ 
+  publicUploadApiKey, 
+  publicUploadUrl, 
+  allPosts, 
+  createSignature, 
+  createPost, 
+  deletePost 
+  }: Props) => {
 
   const [interfaceMode, setInterfaceMode] = useState<'create' | 'edit' | 'delete' | 'none'>('none');
   const [promptState, setPromptState] = useState<{ message: string, success: boolean } | null>(null);
@@ -20,12 +30,6 @@ const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
   const handleCreateModeButton = (): void => {
     (interfaceMode !== 'create') ? setInterfaceMode('create') : setInterfaceMode('none')
   };
-
-  /*
-  const handleEditModeButton = (): void => {
-    (interfaceMode !== 'edit') ? setInterfaceMode('edit') : setInterfaceMode('none')
-  };
-  */
 
   const handleDeleteModeButton = (postId: number): void => {
     if (postIsBeingDeleted) return;
@@ -81,6 +85,9 @@ const UpdateNewsInterface = ({ allPosts, createPost, deletePost }: Props) => {
       {(interfaceMode === 'create') && 
       <div className='mb-12'>
         <UpdateNewsForm 
+          publicUploadApiKey={publicUploadApiKey}
+          publicUploadUrl={publicUploadUrl}
+          createSignature={createSignature}
           databaseService={createPost} 
           setPromptState={setPromptState}
         />

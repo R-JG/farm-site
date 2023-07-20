@@ -10,6 +10,8 @@ import UpdateShopInterface from '@/components/UpdateShopInterface';
 
 const UpdateShopPage = async () => {
 
+  /* DISABLED COMPONENT
+
   const rootDirPath = resolve(require.main?.filename ?? '');
 
   const session = await getServerSession(options);
@@ -97,6 +99,7 @@ const UpdateShopPage = async () => {
       />
     </main>
   );
+  */ return <div></div>;
 };
 
 export default UpdateShopPage;

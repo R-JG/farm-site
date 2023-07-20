@@ -1,16 +1,13 @@
-import { File } from 'buffer';
-import fsp from 'fs/promises';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewNewsPost } from '@/utils/types';
-import { resolve } from 'path';
+import { createUploadSignature } from '@/utils/media';
 import UpdateNewsInterface from '@/components/UpdateNewsInterface';
+import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_URL } from '@/utils/config';
 
 const UpdateNewsPage = async () => {
-
-  const rootDirPath = resolve(require.main?.filename ?? '');
 
   const session = await getServerSession(options);
 
@@ -22,6 +19,11 @@ const UpdateNewsPage = async () => {
     orderBy: { createdAt: 'desc' } 
   });
 
+  const createSignature = async (): Promise<{ timestamp: number, signature: string }> => {
+    'use server';
+    return createUploadSignature();
+  };
+
   const createPost = async (postUploadData: FormData): Promise<{ success: boolean }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
@@ -31,24 +33,20 @@ const UpdateNewsPage = async () => {
         title: '',
         content: '',
         link: '',
-        linkText: '',
-        images: []
+        linkText: ''
       }; 
-      let imageFile: File | undefined;
+      let uploadedImageIds: string[] = [];
       formDataArray.forEach(([k, v]) => {
-        if (v instanceof File) {
-          imageFile = v;
-        } else if ((k in newPost) && (typeof v === 'string') && (k !== 'images')) {
+        if ((k in newPost) && (typeof v === 'string')) {
           newPost[k as keyof Omit<NewNewsPost, 'images'>] = v;
+        } else if ((k === 'imageIds') && (typeof v === 'string')) {
+          uploadedImageIds.push(v);
         };
       });
-      if (imageFile) {
-        const imageStream = imageFile.stream();
-        const pathFromPublic = `/news-posts/${imageFile.name}`;
-        await fsp.writeFile(`${rootDirPath}/public${pathFromPublic}`, imageStream);
-        newPost.images.push(pathFromPublic);
-      };
-      await prisma.newsPost.create({ data: newPost });
+      const createdPost = await prisma.newsPost.create({ data: newPost });
+      await Promise.all(uploadedImageIds.map(id => prisma.newsPostImage.create({
+        data: { id, newsPostId: createdPost.id }
+      })));
       revalidatePath('/');
       return { success: true };
     } catch (error) {
@@ -57,7 +55,13 @@ const UpdateNewsPage = async () => {
     };
   };
 
-  const deletePost = async (postId: number): Promise<{ success: boolean }> => {
+  const deletePost = async () => {
+    'use server';
+    return 'delete placeholder';
+  };
+
+  /*
+  const OLD_deletePost = async (postId: number): Promise<{ success: boolean }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
@@ -78,11 +82,15 @@ const UpdateNewsPage = async () => {
       return { success: false };
     };
   };
+  */
 
   return (
     <main className='flex-grow'>
       <UpdateNewsInterface 
+        publicUploadApiKey={PUBLIC_CLOUDINARY_API_KEY}
+        publicUploadUrl={PUBLIC_CLOUDINARY_URL}
         allPosts={allPosts}
+        createSignature={createSignature}
         createPost={createPost}
         deletePost={deletePost}
       />

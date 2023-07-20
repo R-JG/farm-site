@@ -10,6 +10,8 @@ import UpdateBlogInterface from '@/components/UpdateBlogInterface';
 
 const UpdateBlogPage = async () => {
 
+  /* DISABLED COMPONENT
+
   const rootDirPath = resolve(require.main?.filename ?? '');
 
   const session = await getServerSession(options);
@@ -96,6 +98,7 @@ const UpdateBlogPage = async () => {
       />
     </main>
   );
+  */ return <div></div>;
 };
 
 export default UpdateBlogPage;
