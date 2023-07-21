@@ -5,12 +5,22 @@ import { ShopItem } from '@/utils/types';
 import UpdateShopForm from './UpdateShopForm';
 
 type Props = {
-  allItems: ShopItem[],
-  createItem: (itemRequestData: FormData) => Promise<{ success: boolean }>,
-  deleteItem: (itemId: number) => Promise<{ success: boolean }>
+  publicUploadApiKey: string,
+  publicUploadUrl: string, 
+  allShopItems: ShopItem[],
+  createSignature: () => Promise<null | { timestamp: number, signature: string }>,
+  createShopItem: (itemRequestData: FormData) => Promise<{ success: boolean }>,
+  deleteShopItem: (itemId: number) => Promise<{ success: boolean }>
 };
 
-const UpdateShopInterface = ({ allItems, createItem, deleteItem }: Props) => {
+const UpdateShopInterface = ({ 
+  publicUploadApiKey,
+  publicUploadUrl,
+  allShopItems,
+  createSignature,
+  createShopItem,
+  deleteShopItem
+  }: Props) => {
   
   const [interfaceMode, setInterfaceMode] = useState<'create' | 'edit' | 'delete' | 'none'>('none');
   const [promptState, setPromptState] = useState<{ message: string, success: boolean } | null>(null);
@@ -36,7 +46,7 @@ const UpdateShopInterface = ({ allItems, createItem, deleteItem }: Props) => {
     if (!itemToDeleteId || itemIsBeingDeleted) return;
     setItemIsBeingDeleted(true);
     try {
-      const response = await deleteItem(itemToDeleteId);
+      const response = await deleteShopItem(itemToDeleteId);
       if (response.success) {
         setPromptState({ message: 'Successfully deleted the item', success: true });
       } else {
@@ -75,7 +85,10 @@ const UpdateShopInterface = ({ allItems, createItem, deleteItem }: Props) => {
       {(interfaceMode === 'create') && 
       <div className='mb-12'>
         <UpdateShopForm 
-          databaseService={createItem} 
+          publicUploadApiKey={publicUploadApiKey}
+          publicUploadUrl={publicUploadUrl}
+          createSignature={createSignature}
+          createInDb={createShopItem} 
           setPromptState={setPromptState}
         />
       </div>}
@@ -83,7 +96,7 @@ const UpdateShopInterface = ({ allItems, createItem, deleteItem }: Props) => {
       <div className='py-4 border-t-2 border-black flex flex-col justify-start items-center'>
         <p className='mb-4 text-xl font-medium underline'>Current items on the shop page:</p>
         <div className='flex flex-row justify-start items-start flex-wrap'>
-          {allItems.map(item => 
+          {allShopItems.map(item => 
           <div 
             key={item.id}
             className=' max-w-sm p-4 m-4 border-black border-2 rounded-2xl'

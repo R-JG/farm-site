@@ -4,12 +4,10 @@ import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { NewNewsPost } from '@/utils/types';
 import { createContent } from '@/utils/client';
 
-type NewsPostRequest = Omit<NewNewsPost, 'images'>;
-
 type Props = {
   publicUploadApiKey: string,
   publicUploadUrl: string, 
-  createSignature: () => Promise<{ timestamp: number, signature: string }>,
+  createSignature: () => Promise<null | { timestamp: number, signature: string }>,
   createInDb: (data: FormData) => Promise<{ success: boolean }>,
   setPromptState: (params: { message: string, success: boolean } | null) => void
 };
@@ -22,9 +20,9 @@ const UpdateNewsForm = ({
   setPromptState 
   }: Props) => {
 
-  const baseInputValues = { title: '', content: '', link: '', linkText: '' };
+  const baseInputValues: NewNewsPost = { title: '', content: '', link: '', linkText: '' };
 
-  const [inputValues, setInputValues] = useState<NewsPostRequest>(baseInputValues);
+  const [inputValues, setInputValues] = useState<NewNewsPost>(baseInputValues);
   const [inputFiles, setInputFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

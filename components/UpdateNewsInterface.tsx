@@ -8,7 +8,7 @@ type Props = {
   publicUploadApiKey: string,
   publicUploadUrl: string, 
   allPosts: NewsPost[],
-  createSignature: () => Promise<{ timestamp: number, signature: string }>,
+  createSignature: () => Promise<null | { timestamp: number, signature: string }>,
   createPost: (data: FormData) => Promise<{ success: boolean }>,
   deletePost: (postId: number) => Promise<{ success: boolean }>
 };

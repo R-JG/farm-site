@@ -2,11 +2,15 @@ const uploadFiles = async (
   publicUploadApiKey: string,
   publicUploadUrl: string, 
   inputFiles: File[], 
-  createSignature: () => Promise<{ timestamp: number, signature: string }>
+  createSignature: () => Promise<null | { timestamp: number, signature: string }>
 ): Promise<Response[]> => {
   let uploadRequests: Promise<Response>[] = [];
   if (inputFiles.length > 0) {
-    const { timestamp, signature } = await createSignature();
+    const response = await createSignature();
+    if (!response) {
+      throw new Error('Could not get upload signature from the server');
+    };
+    const { timestamp, signature } = response;
     for (const file of inputFiles) {
       let cloudinaryFormData = new FormData();
       cloudinaryFormData.append('api_key', publicUploadApiKey);
@@ -27,7 +31,7 @@ export const createContent = async (
   publicUploadUrl: string, 
   inputValues: object, 
   inputFiles: File[],
-  createSignature: () => Promise<{ timestamp: number, signature: string }>, 
+  createSignature: () => Promise<null | { timestamp: number, signature: string }>, 
   createInDb: (data: FormData) => Promise<{ success: boolean }>
 ): Promise<{ success: boolean }> => {
   const responseArray = await uploadFiles(

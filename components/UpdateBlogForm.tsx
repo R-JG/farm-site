@@ -2,19 +2,28 @@
 
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { NewBlogPost } from '@/utils/types';
-
-type BlogPostRequest = Omit<NewBlogPost, 'images'> & { imageFiles: File[] };
+import { createContent } from '@/utils/client';
 
 type Props = {
-  databaseService: (data: FormData) => Promise<{ success: boolean }>,
+  publicUploadApiKey: string,
+  publicUploadUrl: string, 
+  createSignature: () => Promise<null | { timestamp: number, signature: string }>,
+  createInDb: (data: FormData) => Promise<{ success: boolean }>,
   setPromptState: (params: { message: string, success: boolean } | null) => void
 };
 
-const UpdateBlogForm = ({ databaseService, setPromptState }: Props) => {
+const UpdateBlogForm = ({ 
+  publicUploadApiKey, 
+  publicUploadUrl, 
+  createSignature, 
+  createInDb, 
+  setPromptState 
+  }: Props) => {
 
-  const baseInputValues = { title: '', content: '', author: '', date: '', imageFiles: [] };
+  const baseInputValues: NewBlogPost = { title: '', content: '', author: '', date: '' };
 
-  const [inputValues, setInputValues] = useState<BlogPostRequest>(baseInputValues);
+  const [inputValues, setInputValues] = useState<NewBlogPost>(baseInputValues);
+  const [inputFiles, setInputFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,32 +36,22 @@ const UpdateBlogForm = ({ databaseService, setPromptState }: Props) => {
 
   const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (!e.currentTarget.files) return;
-    const imageFiles = Array.from(e.currentTarget.files);
-    setInputValues({ ...inputValues, imageFiles });
+    const fileArray = Array.from(e.currentTarget.files);
+    setInputFiles(fileArray);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (isSubmitting) return;
-    const formData = new FormData();
-    Object.entries(inputValues).forEach(([k, v]) => {
-      if (Array.isArray(v)) {
-        v.forEach(file => {
-          if (file instanceof File) {
-            formData.append(file.name, file);
-          };
-        });
-      } else {
-        formData.append(k, v);
-      };
-    });
     setIsSubmitting(true);
     try {
-      const response = await databaseService(formData);
+      const response = await createContent(
+        publicUploadApiKey, publicUploadUrl, inputValues, inputFiles, createSignature, createInDb
+      );
       if (response.success) {
         setPromptState({ message: 'Successfully created a new post', success: true });
       } else {
-        throw new Error('Server Error');
+        throw new Error('Server error in creating a blog post');
       };
     } catch (error) {
       console.error(error);

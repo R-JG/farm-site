@@ -2,19 +2,30 @@
 
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { NewShopItem } from '@/utils/types';
+import { createContent } from '@/utils/client';
 
-type ShopItemRequest = Omit<NewShopItem, 'images' | 'price'> & { imageFiles: File[], price: string };
+type ShopItemRequest = Omit<NewShopItem, 'price'> & { price: string };
 
 type Props = {
-  databaseService: (data: FormData) => Promise<{ success: boolean }>,
+  publicUploadApiKey: string,
+  publicUploadUrl: string, 
+  createSignature: () => Promise<null | { timestamp: number, signature: string }>,
+  createInDb: (data: FormData) => Promise<{ success: boolean }>,
   setPromptState: (params: { message: string, success: boolean } | null) => void
 };
 
-const UpdateShopForm = ({ databaseService, setPromptState }: Props) => {
+const UpdateShopForm = ({
+  publicUploadApiKey,
+  publicUploadUrl,
+  createSignature,
+  createInDb,
+  setPromptState
+  }: Props) => {
 
-  const baseInputValues = { name: '', description: '', price: '', imageFiles: [] };
+  const baseInputValues: ShopItemRequest = { name: '', description: '', price: '' };
 
   const [inputValues, setInputValues] = useState<ShopItemRequest>(baseInputValues);
+  const [inputFiles, setInputFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,32 +38,22 @@ const UpdateShopForm = ({ databaseService, setPromptState }: Props) => {
 
   const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (!e.currentTarget.files) return;
-    const imageFiles = Array.from(e.currentTarget.files);
-    setInputValues({ ...inputValues, imageFiles });
+    const fileArray = Array.from(e.currentTarget.files);
+    setInputFiles(fileArray);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (isSubmitting) return;
-    const formData = new FormData();
-    Object.entries(inputValues).forEach(([k, v]) => {
-      if (Array.isArray(v)) {
-        v.forEach(file => {
-          if (file instanceof File) {
-            formData.append(file.name, file);
-          };
-        });
-      } else {
-        formData.append(k, v);
-      };
-    });
     setIsSubmitting(true);
     try {
-      const response = await databaseService(formData);
+      const response = await createContent(
+        publicUploadApiKey, publicUploadUrl, inputValues, inputFiles, createSignature, createInDb
+      );
       if (response.success) {
         setPromptState({ message: 'Successfully created a new item', success: true });
       } else {
-        throw new Error('Server Error');
+        throw new Error('Server error in creating a shop item');
       };
     } catch (error) {
       console.error(error);

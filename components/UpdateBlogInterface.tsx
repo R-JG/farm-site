@@ -5,12 +5,22 @@ import { BlogPost } from '@/utils/types';
 import UpdateBlogForm from './UpdateBlogForm';
 
 type Props = {
+  publicUploadApiKey: string,
+  publicUploadUrl: string, 
   allBlogPosts: BlogPost[],
+  createSignature: () => Promise<null | { timestamp: number, signature: string }>,
   createBlogPost: (postRequestData: FormData) => Promise<{ success: boolean }>,
   deleteBlogPost: (postId: number) => Promise<{ success: boolean }>
 };
 
-const UpdateBlogInterface = ({ allBlogPosts, createBlogPost, deleteBlogPost }: Props) => {
+const UpdateBlogInterface = ({ 
+  publicUploadApiKey, 
+  publicUploadUrl, 
+  allBlogPosts, 
+  createSignature,
+  createBlogPost, 
+  deleteBlogPost 
+  }: Props) => {
     
   const [interfaceMode, setInterfaceMode] = useState<'create' | 'edit' | 'delete' | 'none'>('none');
   const [promptState, setPromptState] = useState<{ message: string, success: boolean } | null>(null);
@@ -75,7 +85,10 @@ const UpdateBlogInterface = ({ allBlogPosts, createBlogPost, deleteBlogPost }: P
       {(interfaceMode === 'create') && 
       <div className='mb-12'>
         <UpdateBlogForm 
-          databaseService={createBlogPost} 
+          publicUploadApiKey={publicUploadApiKey}
+          publicUploadUrl={publicUploadUrl}
+          createSignature={createSignature}
+          createInDb={createBlogPost} 
           setPromptState={setPromptState}
         />
       </div>}

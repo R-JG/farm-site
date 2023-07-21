@@ -1,18 +1,14 @@
-import { File } from 'buffer';
-import fsp from 'fs/promises';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewBlogPost } from '@/utils/types';
-import { resolve } from 'path';
+import { createUploadSignature } from '@/utils/server';
 import UpdateBlogInterface from '@/components/UpdateBlogInterface';
+import { deleteUploadedFile } from '@/utils/server';
+import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_URL } from '@/utils/config';
 
 const UpdateBlogPage = async () => {
-
-  /* DISABLED COMPONENT
-
-  const rootDirPath = resolve(require.main?.filename ?? '');
 
   const session = await getServerSession(options);
 
@@ -20,39 +16,40 @@ const UpdateBlogPage = async () => {
     where: { email: session.user.email } 
   }) : null;
 
-  const allBlogPosts = await prisma.blogPost.findMany({ 
+  const allPosts = await prisma.blogPost.findMany({ 
     orderBy: { createdAt: 'desc' } 
   });
 
-  const createBlogPost = async (postRequestData: FormData): Promise<{ success: boolean }> => {
+  const createSignature = async (): Promise<null | { timestamp: number, signature: string }> => {
+    'use server';
+    if (sessionUser?.role !== 'ADMIN') return null;
+    return createUploadSignature();
+  };
+
+  const createPost = async (postUploadData: FormData): Promise<{ success: boolean }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
-      const formDataArray = Array.from(postRequestData);
+      const formDataArray = Array.from(postUploadData);
       let newPost: NewBlogPost = {
         title: '',
         content: '',
         author: '',
-        date: '',
-        images: []
+        date: ''
       }; 
-      let imageFiles: File[] = [];
+      let uploadedImageIds: string[] = [];
       formDataArray.forEach(([k, v]) => {
-        if (v instanceof File) {
-          imageFiles.push(v);
-        } else if ((k in newPost) && (typeof v === 'string') && (k !== 'images')) {
-          newPost[k as keyof Omit<NewBlogPost, 'images'>] = v;
+        if ((k in newPost) && (typeof v === 'string')) {
+          newPost[k as keyof NewBlogPost] = v;
+        } else if ((k === 'imageIds') && (typeof v === 'string')) {
+          uploadedImageIds.push(v);
         };
       });
-      for (const imageFile of imageFiles) {
-        const imageStream = imageFile.stream();
-        const pathFromPublic = `/blog-posts/${imageFile.name}`;
-        await fsp.writeFile(`${rootDirPath}/public${pathFromPublic}`, imageStream);
-        newPost.images.push(pathFromPublic);
-      };
-      await prisma.blogPost.create({ data: newPost });
-      revalidatePath('/update-blog');
-      revalidatePath('/blog');
+      const createdPost = await prisma.blogPost.create({ data: newPost });
+      await Promise.all(uploadedImageIds.map(id => prisma.blogPostImage.create({
+        data: { id, blogPostId: createdPost.id }
+      })));
+      revalidatePath('/');
       return { success: true };
     } catch (error) {
       console.error(error);
@@ -60,28 +57,19 @@ const UpdateBlogPage = async () => {
     };
   };
 
-  const deleteBlogPost = async (postId: number): Promise<{ success: boolean }> => {
+  const deletePost = async (postId: number): Promise<{ success: boolean }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const postToDelete = await prisma.blogPost.findUnique({ where: { id: postId } });
       if (!postToDelete) return { success: false };
-      const associatedImagePaths = postToDelete.images;
-      let imagesToDelete: string[] = [];
-      for (const path of associatedImagePaths) {
-        const postsSharingImage = await prisma.blogPost.findMany({ 
-          where: { images: { has: path } } 
-        });
-        if (postsSharingImage.length <= 1) {
-          imagesToDelete.push(path);
-        };
-      };
+      const associatedImages = await prisma.blogPostImage.findMany({ 
+        where: { blogPostId: postToDelete.id } 
+      });
+      await Promise.all(associatedImages.map(image => deleteUploadedFile(image.id)));
+      await prisma.blogPostImage.deleteMany({ where: { blogPostId: postToDelete.id } });
       await prisma.blogPost.delete({ where: { id: postId } });
-      for (const path of imagesToDelete) {
-        await fsp.rm(`${rootDirPath}/public${path}`); 
-      };
-      revalidatePath('/update-blog');
-      revalidatePath('/blog');
+      revalidatePath('/');
       return { success: true };
     } catch (error) {
       console.error(error);
@@ -92,13 +80,15 @@ const UpdateBlogPage = async () => {
   return (
     <main className='flex-grow'>
       <UpdateBlogInterface 
-        allBlogPosts={allBlogPosts}
-        createBlogPost={createBlogPost}
-        deleteBlogPost={deleteBlogPost}
+        publicUploadApiKey={PUBLIC_CLOUDINARY_API_KEY}
+        publicUploadUrl={PUBLIC_CLOUDINARY_URL}
+        allBlogPosts={allPosts}
+        createSignature={createSignature}
+        createBlogPost={createPost}
+        deleteBlogPost={deletePost}
       />
     </main>
   );
-  */ return <div></div>;
 };
 
 export default UpdateBlogPage;

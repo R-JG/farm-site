@@ -20,8 +20,9 @@ const UpdateNewsPage = async () => {
     orderBy: { createdAt: 'desc' } 
   });
 
-  const createSignature = async (): Promise<{ timestamp: number, signature: string }> => {
+  const createSignature = async (): Promise<null | { timestamp: number, signature: string }> => {
     'use server';
+    if (sessionUser?.role !== 'ADMIN') return null;
     return createUploadSignature();
   };
 
@@ -39,7 +40,7 @@ const UpdateNewsPage = async () => {
       let uploadedImageIds: string[] = [];
       formDataArray.forEach(([k, v]) => {
         if ((k in newPost) && (typeof v === 'string')) {
-          newPost[k as keyof Omit<NewNewsPost, 'images'>] = v;
+          newPost[k as keyof NewNewsPost] = v;
         } else if ((k === 'imageIds') && (typeof v === 'string')) {
           uploadedImageIds.push(v);
         };
