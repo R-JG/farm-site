@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import { prisma } from '@/prisma/database';
+import ContentImage from '@/components/ContentImage';
 
 type Props = {
   params: { itemId: string }
@@ -12,15 +12,18 @@ export const generateStaticParams = async () => {
 
 const ShopItemPage = async ({ params }: Props) => {
 
-  const itemData = await prisma.shopItem.findFirst({ where: { id: Number(params.itemId) } });
+  const itemData = await prisma.shopItem.findFirst({ 
+    where: { id: Number(params.itemId) }, 
+    include: { images: true } 
+  });
 
   if (!itemData) return <div></div>;
 
   return (
     <main className='p-12 flex flex-row justify-center items-start'>
       <div className='w-[30vw] aspect-square relative'>
-        <Image 
-          src={itemData.images[0]} 
+        <ContentImage 
+          src={itemData.images[0].id} 
           alt=''
           fill={true}
           sizes='(max-width: 640px) 90vw, 40vw'

@@ -1,10 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { ShopItem } from '@/utils/types';
+import ContentImage from './ContentImage';
 
 type Props = {
-  itemData: ShopItem, 
-
+  itemData: ShopItem & { images: { id: string, shopItemId: number }[] }, 
 };
 
 const ShopItemPreview = ({ itemData }: Props) => {
@@ -16,8 +15,8 @@ const ShopItemPreview = ({ itemData }: Props) => {
       >
         <div className='w-52 aspect-square relative'>
           {(itemData.images.length > 0) &&
-          <Image
-            src={itemData.images[0]} 
+          <ContentImage
+            src={itemData.images[0].id} 
             alt=''
             fill={true}
             sizes='(max-width: 640px) 40vw,20vw'

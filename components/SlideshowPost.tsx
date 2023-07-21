@@ -1,13 +1,12 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { NewsPost } from '@/utils/types';
+import ContentImage from './ContentImage';
 
 type Props = {
-  postData: NewsPost
+  postData: NewsPost & { images: { id: string, newsPostId: number }[] }
 };
 
 const SlideshowPost = ({ postData }: Props) => {
-
   return (
     <div className='w-full flex flex-row justify-center items-center'>
       <div className='w-5/12 ml-16 mr-3 flex flex-col justify-center items-start'>
@@ -23,14 +22,13 @@ const SlideshowPost = ({ postData }: Props) => {
         </Link>}
       </div>
       <div className='relative w-5/12 ml-6 mb-9 mt-3 aspect-square rounded grid place-content-center overflow-hidden'>
-        {/*<Image 
-          key={postData.images[0]}
-          src={postData.images[0]} 
+        <ContentImage 
+          src={postData.images[0].id} 
           alt=''
           fill={true}
           sizes='(max-width: 640px) 90vw, 40vw'
           className='object-cover rounded'
-        />*/<div>IMAGE TEMPORARILY DISABLED</div>}
+        />
       </div>
     </div>
   );
