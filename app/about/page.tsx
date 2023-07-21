@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import lizAndJohn from '@/public/static/liz-and-john.webp';
+import lizAndJohn from '@/public/liz-and-john.webp';
 
 const About = () => {
   return (

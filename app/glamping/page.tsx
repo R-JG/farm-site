@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import ThumbnailGallery from '@/components/ThumbnailGallery';
-import airbnb from '@/public/static/icon--airbnb-color.svg';
-import glampingOne from '@/public/static/glamping--1.webp';
-import glampingTwo from '@/public/static/glamping--2.webp';
-import glampingThree from '@/public/static/glamping--3.webp';
-import glampingFour from '@/public/static/glamping--4.webp';
-import glampingFive from '@/public/static/glamping--5.webp';
+import airbnb from '@/public/icon--airbnb-color.svg';
+import glampingOne from '@/public/glamping--1.webp';
+import glampingTwo from '@/public/glamping--2.webp';
+import glampingThree from '@/public/glamping--3.webp';
+import glampingFour from '@/public/glamping--4.webp';
+import glampingFive from '@/public/glamping--5.webp';
 
 const GlampingPage = () => {
   return (

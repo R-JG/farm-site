@@ -1,7 +1,7 @@
 import NewsletterForm from './NewsletterForm';
 import IconLink from './IconLink';
-import facebookIcon from '@/public/static/icon--facebook.svg';
-import instagramIcon from '@/public/static/icon--instagram.svg';
+import facebookIcon from '@/public/icon--facebook.svg';
+import instagramIcon from '@/public/icon--instagram.svg';
 
 const Footer = () => {
   return (

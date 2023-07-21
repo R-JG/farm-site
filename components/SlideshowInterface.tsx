@@ -2,8 +2,8 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import Image from 'next/image';
-import arrowBack from '@/public/static/arrow-left.svg';
-import arrowForward from '@/public/static/arrow-right.svg';
+import arrowBack from '@/public/arrow-left.svg';
+import arrowForward from '@/public/arrow-right.svg';
 
 type Props = {
   children: ReactNode, 
