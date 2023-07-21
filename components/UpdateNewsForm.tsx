@@ -2,6 +2,7 @@
 
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { NewNewsPost } from '@/utils/types';
+import { createContent } from '@/utils/client';
 
 type NewsPostRequest = Omit<NewNewsPost, 'images'>;
 
@@ -9,15 +10,15 @@ type Props = {
   publicUploadApiKey: string,
   publicUploadUrl: string, 
   createSignature: () => Promise<{ timestamp: number, signature: string }>,
-  databaseService: (data: FormData) => Promise<{ success: boolean }>,
+  createInDb: (data: FormData) => Promise<{ success: boolean }>,
   setPromptState: (params: { message: string, success: boolean } | null) => void
 };
 
 const UpdateNewsForm = ({ 
-  publicUploadApiKey, 
-  publicUploadUrl, 
+  publicUploadApiKey,
+  publicUploadUrl,
   createSignature, 
-  databaseService, 
+  createInDb, 
   setPromptState 
   }: Props) => {
 
@@ -41,53 +42,18 @@ const UpdateNewsForm = ({
     setInputFiles(fileArray);
   };
 
-  const uploadFiles = async () => {
-    let uploadRequests: Promise<Response>[] = [];
-    if (inputFiles.length > 0) {
-      const { timestamp, signature } = await createSignature();
-      for (const file of inputFiles) {
-        let cloudinaryFormData = new FormData();
-        cloudinaryFormData.append('api_key', publicUploadApiKey);
-        cloudinaryFormData.append('signature', signature);
-        cloudinaryFormData.append('timestamp', String(timestamp));
-        cloudinaryFormData.append('folder', 'farm-site');
-        cloudinaryFormData.append('file', file);
-        uploadRequests.push(
-          fetch(publicUploadUrl, { method: 'POST', body: cloudinaryFormData })
-        );
-      };
-    };
-    return Promise.all(uploadRequests);
-  };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const responseArray = await uploadFiles();
-      responseArray.forEach(response => {
-        if (!response.ok) throw new Error('not all images could be uploaded');
-      });
-      let imageIds: string[] = [];
-      await Promise.all(responseArray.map(response => new Promise((resolve, reject) => {
-        response.json().then(responseData => {
-          if ((typeof responseData === 'object') && ('public_id' in responseData)) {
-            imageIds.push(responseData.public_id);
-            resolve(undefined);
-          } else {
-            reject('public_id property is missing from the response data');
-          };
-        });
-      }))); 
-      let dbFormData = new FormData();
-      Object.entries(inputValues).forEach(([k, v]) => dbFormData.append(k, v ?? ''));
-      imageIds.forEach(id => dbFormData.append('imageIds', id));
-      const response = await databaseService(dbFormData);
+      const response = await createContent(
+        publicUploadApiKey, publicUploadUrl, inputValues, inputFiles, createSignature, createInDb
+      );
       if (response.success) {
         setPromptState({ message: 'Successfully created a new post', success: true });
       } else {
-        throw new Error('Server Error');
+        throw new Error('Server error in creating a news post');
       };
     } catch (error) {
       console.error(error);
@@ -153,13 +119,6 @@ const UpdateNewsForm = ({
             required
             type='file'
             accept='.jpg,.jpeg,.png,.webp,.avif,.svg'
-
-
-
-            multiple
-
-
-
             name='imageFile'
             onChange={handleFileInputChange} 
             ref={fileInputRef}

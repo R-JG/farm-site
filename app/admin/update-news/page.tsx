@@ -3,8 +3,9 @@ import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
 import { prisma } from '@/prisma/database';
 import { NewNewsPost } from '@/utils/types';
-import { createUploadSignature } from '@/utils/media';
+import { createUploadSignature } from '@/utils/server';
 import UpdateNewsInterface from '@/components/UpdateNewsInterface';
+import { deleteUploadedFile } from '@/utils/server';
 import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_URL } from '@/utils/config';
 
 const UpdateNewsPage = async () => {
@@ -55,26 +56,18 @@ const UpdateNewsPage = async () => {
     };
   };
 
-  const deletePost = async () => {
-    'use server';
-    return 'delete placeholder';
-  };
-
-  /*
-  const OLD_deletePost = async (postId: number): Promise<{ success: boolean }> => {
+  const deletePost = async (postId: number): Promise<{ success: boolean }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const postToDelete = await prisma.newsPost.findUnique({ where: { id: postId } });
       if (!postToDelete) return { success: false };
-      const associatedImagePath = postToDelete.images[0];
-      const postsSharingImage = await prisma.newsPost.findMany({ 
-        where: { images: { has: associatedImagePath } } 
+      const associatedImages = await prisma.newsPostImage.findMany({ 
+        where: { newsPostId: postToDelete.id } 
       });
+      await Promise.all(associatedImages.map(image => deleteUploadedFile(image.id)));
+      await prisma.newsPostImage.deleteMany({ where: { newsPostId: postToDelete.id } });
       await prisma.newsPost.delete({ where: { id: postId } });
-      if (postsSharingImage.length <= 1) {
-        await fsp.rm(`${rootDirPath}/public${associatedImagePath}`); 
-      };
       revalidatePath('/');
       return { success: true };
     } catch (error) {
@@ -82,7 +75,6 @@ const UpdateNewsPage = async () => {
       return { success: false };
     };
   };
-  */
 
   return (
     <main className='flex-grow'>

@@ -10,12 +10,12 @@ type Props = {
   allPosts: NewsPost[],
   createSignature: () => Promise<{ timestamp: number, signature: string }>,
   createPost: (data: FormData) => Promise<{ success: boolean }>,
-  deletePost: any
+  deletePost: (postId: number) => Promise<{ success: boolean }>
 };
 
 const UpdateNewsInterface = ({ 
-  publicUploadApiKey, 
-  publicUploadUrl, 
+  publicUploadApiKey,
+  publicUploadUrl,
   allPosts, 
   createSignature, 
   createPost, 
@@ -88,7 +88,7 @@ const UpdateNewsInterface = ({
           publicUploadApiKey={publicUploadApiKey}
           publicUploadUrl={publicUploadUrl}
           createSignature={createSignature}
-          databaseService={createPost} 
+          createInDb={createPost} 
           setPromptState={setPromptState}
         />
       </div>}
