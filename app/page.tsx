@@ -3,8 +3,9 @@ import Slideshow from '@/components/Slideshow';
 import bgOne from '@/public/bg--home-1.png';
 import wheelbarrow from '@/public/graphic--wheelbarrow-2.png';
 
-const Home = () => {
-  
+export const revalidate = 60;
+
+const Home = async () => {
   return (
     <main className='flex flex-col justify-start items-center'>
       <div className='fixed top-0 -z-50'>
