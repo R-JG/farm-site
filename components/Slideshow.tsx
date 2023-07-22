@@ -9,13 +9,13 @@ const Slideshow = async () => {
     include: { images: true }
   });
 
-  const postViewportWidth = 90;
+  const postViewportWidth = 100;
   const postWidthStyle = `${postViewportWidth}vw`;
 
   return (
     <div 
       style={{ width: postWidthStyle }} 
-      className='relative m-9 bg-blue-200 bg-opacity-50 rounded-2xl overflow-hidden shadow-md'
+      className='relative bg-blue-100 overflow-hidden shadow-md'
     >
       <SlideshowInterface 
         postAmount={allNewsPosts.length}

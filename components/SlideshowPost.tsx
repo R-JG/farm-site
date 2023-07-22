@@ -21,7 +21,7 @@ const SlideshowPost = ({ postData }: Props) => {
           {postData.linkText}
         </Link>}
       </div>
-      <div className='relative w-5/12 ml-6 mb-9 mt-3 aspect-square rounded grid place-content-center overflow-hidden'>
+      <div className='relative w-[35%] ml-6 my-9 aspect-square rounded grid place-content-center overflow-hidden'>
         <ContentImage 
           src={postData.images[0].id} 
           alt=''
