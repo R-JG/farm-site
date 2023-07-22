@@ -1,13 +1,21 @@
 import { prisma } from '@/prisma/database';
 import SlideshowInterface from './SlideshowInterface';
 import SlideshowPost from './SlideshowPost';
+import { cache } from 'react';
 
 const Slideshow = async () => {
 
+  const getAllNewsPosts = cache(async () => await prisma.newsPost.findMany({ 
+    orderBy: { createdAt: 'desc' },
+    include: { images: true }
+  }));
+  /*
   const allNewsPosts = await prisma.newsPost.findMany({ 
     orderBy: { createdAt: 'desc' },
     include: { images: true }
   });
+  */
+  const allNewsPosts = await getAllNewsPosts();
 
   const postViewportWidth = 100;
   const postWidthStyle = `${postViewportWidth}vw`;

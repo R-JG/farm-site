@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Slideshow from '@/components/Slideshow';
 import bgOne from '@/public/bg--home-1.png';
-import bgTwo from '@/public/bg--home-2.png';
 import wheelbarrow from '@/public/graphic--wheelbarrow-2.png';
 
 const Home = () => {
@@ -33,14 +32,7 @@ const Home = () => {
       </div>
       <Slideshow />
       <div className='relative h-[100vh] w-full overflow-hidden'>
-        <div className=' sticky top-0 -z-40 h-[100vh] w-[100vw]'>
-          <Image 
-            src={bgTwo}
-            alt=''
-            fill={true}
-            className='object-cover'
-          />
-        </div>
+
       </div>
     </main>
   );
