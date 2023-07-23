@@ -9,7 +9,7 @@ type Props = {
 const SlideshowPost = ({ postData }: Props) => {
   return (
     <div className='w-full flex flex-row justify-center items-center'>
-      <div className='w-1/2 py-8 pl-12 flex flex-row justify-end items-center'>
+      <div className='w-1/2 py-8 pl-20 flex flex-row justify-end items-center'>
         <div className=' min-w-[20rem] w-fit ml-16 mr-3 flex flex-col justify-center items-start'>
           <h1 className='text-2xl font-medium mb-6 border-b-2 border-black'>{postData.title}</h1>
           <p className='text-lg leading-6 my-1'>{postData.content}</p>
@@ -23,8 +23,8 @@ const SlideshowPost = ({ postData }: Props) => {
           </Link>}
         </div>
       </div>
-      <div className='w-1/2 flex flex-row justify-end items-center'>
-        <div className='relative w-[80%] ml-6 aspect-square grid place-content-center overflow-hidden'>
+      <div className='w-[50vw] flex flex-row justify-end items-center'>
+        <div className='relative w-[40vw] ml-6 aspect-square grid place-content-center overflow-hidden'>
           <ContentImage 
             src={postData.images[0].id} 
             alt=''

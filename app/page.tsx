@@ -19,7 +19,7 @@ const Home = async () => {
           />
         </div>
       </div>
-      <div className='h-[75vh] w-full mt-32 flex flex-col justify-start items-center'>
+      <div className='h-[75vh] w-full mt-[9rem] flex flex-col justify-start items-center'>
         <div className='w-[45%] px-12 py-5 bg-blue-100 bg-opacity-80 rounded-2xl shadow-md flex flex-row justify-center items-center'>
           <p className='text-lg mx-4 leading-5'>
             At Coyote Song Farm & Forest we grow produce & flowers with focused attention to building living soil.
