@@ -9,8 +9,9 @@ import glampingFive from '@/public/glamping--5.webp';
 
 const GlampingPage = () => {
   return (
-    <main className='flex flex-row justify-center items-center'>
+    <main className=' p-9 flex flex-row justify-center items-center'>
       <ThumbnailGallery 
+        imageType='static-import'
         images={[glampingOne, glampingTwo, glampingThree, glampingFour, glampingFive]}
       />
       <div className='w-[35vw] mx-10 mb-20'>

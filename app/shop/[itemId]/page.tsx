@@ -1,5 +1,6 @@
 import { prisma } from '@/prisma/database';
 import ContentImage from '@/components/ContentImage';
+import ThumbnailGallery from '@/components/ThumbnailGallery';
 
 type Props = {
   params: { itemId: string }
@@ -20,8 +21,9 @@ const ShopItemPage = async ({ params }: Props) => {
   if (!itemData) return <div></div>;
 
   return (
-    <main className='p-12 flex flex-row justify-center items-start'>
-      <div className='w-[30vw] aspect-square relative'>
+    <main className='w-full p-12 flex flex-row justify-evenly items-start'>
+      {(itemData.images.length <= 1)
+      ? <div className='relative w-[30vw] aspect-square'>
         <ContentImage 
           src={itemData.images[0].id} 
           alt=''
@@ -30,7 +32,11 @@ const ShopItemPage = async ({ params }: Props) => {
           className='object-cover rounded-md shadow-md'
         />
       </div>
-      <div className='max-w-lg mx-16'>
+      : <ThumbnailGallery 
+        imageType='admin-content'
+        images={itemData.images.map(image => image.id)}
+      />}
+      <div className='min-w-[20rem] max-w-lg p-4 mr-12 flex flex-col justify-start items-start'>
         <h1 className=' text-xl font-semibold mb-3'>
           {itemData.name}
         </h1>

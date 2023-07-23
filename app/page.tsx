@@ -9,7 +9,7 @@ const Home = async () => {
   return (
     <main className='flex flex-col justify-start items-center'>
       <div className='fixed top-0 -z-50'>
-        <div className='h-[100vh] w-[100vw]'>
+        <div className='relative h-[100vh] w-[100vw]'>
           <Image
             priority={true} 
             src={bgOne}
@@ -32,8 +32,7 @@ const Home = async () => {
         </div>
       </div>
       <Slideshow />
-      <div className='relative h-[100vh] w-full overflow-hidden'>
-
+      <div className='h-[3vh] w-[100vw] bg-blue-50'>
       </div>
     </main>
   );
