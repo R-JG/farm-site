@@ -1,11 +1,18 @@
-import { prisma } from '@/prisma/database';
+// import { prisma } from '@/prisma/database';
+import { ShopItem } from '@/utils/types';
 import ShopItemPreview from './ShopItemPreview';
 
-const ShopItemList = async () => {
+type Props = {
+  allShopItems: ShopItem[]
+};
 
+const ShopItemList = async ({ allShopItems }: Props) => {
+
+  /*
   const allShopItems = await prisma.shopItem.findMany({ 
     include: { images: true } 
   });
+  */
 
   return (
     <div className='w-fit p-12 grid grid-cols-4 place-content-center'>
