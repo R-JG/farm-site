@@ -36,7 +36,7 @@ const ShopItemPage = async ({ params }: Props) => {
         imageType='admin-content'
         images={itemData.images.map(image => image.id)}
       />}
-      <div className='min-w-[20rem] max-w-lg p-4 mr-12 flex flex-col justify-start items-start'>
+      <div className='min-w-[20rem] max-w-lg p-4 mr-12 mt-16 flex flex-col justify-start items-start'>
         <h1 className=' text-xl font-semibold mb-3'>
           {itemData.name}
         </h1>
