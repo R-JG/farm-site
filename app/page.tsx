@@ -4,7 +4,7 @@ import bgOne from '@/public/bg--home-1.png';
 import wheelbarrow from '@/public/graphic--wheelbarrow-2.png';
 import { getAllNewsPosts } from '@/lib/database';
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 const Home = async () => {
 

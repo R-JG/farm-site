@@ -1,7 +1,7 @@
 import BlogPostList from '@/components/BlogPostList';
 import { getAllBlogPosts } from '@/lib/database';
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 const Blog = async () => {
 

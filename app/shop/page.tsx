@@ -1,7 +1,7 @@
 import ShopItemList from '@/components/ShopItemList';
 import { getAllShopItems } from '@/lib/database';
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 const Shop = async () => {
 
