@@ -3,7 +3,7 @@ import { ShopItem } from '@/utils/types';
 import ContentImage from './ContentImage';
 
 type Props = {
-  itemData: ShopItem & { images: { id: string, shopItemId: number }[] }, 
+  itemData: ShopItem, 
 };
 
 const ShopItemPreview = ({ itemData }: Props) => {

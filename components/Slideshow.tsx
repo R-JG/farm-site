@@ -1,13 +1,12 @@
-import { prisma } from '@/prisma/database';
 import SlideshowInterface from './SlideshowInterface';
 import SlideshowPost from './SlideshowPost';
+import { NewsPost } from '@/utils/types';
 
-const Slideshow = async () => {
+type Props = {
+  allNewsPosts: NewsPost[]
+};
 
-  const allNewsPosts = await prisma.newsPost.findMany({ 
-    orderBy: { createdAt: 'desc' },
-    include: { images: true }
-  });
+const Slideshow = async ({ allNewsPosts }: Props) => {
 
   const postViewportWidth = 100;
   const postWidthStyle = `${postViewportWidth}vw`;

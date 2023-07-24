@@ -1,22 +1,19 @@
-import { prisma } from '@/prisma/database';
 import ContentImage from '@/components/ContentImage';
 import ThumbnailGallery from '@/components/ThumbnailGallery';
+import { getAllShopItemIds, getShopItemById } from '@/lib/database';
 
 type Props = {
   params: { itemId: string }
 };
 
 export const generateStaticParams = async () => {
-  const items = await prisma.shopItem.findMany();
+  const items = await getAllShopItemIds();
   return items.map(item => ({ itemId: String(item.id) }))
 };
 
 const ShopItemPage = async ({ params }: Props) => {
 
-  const itemData = await prisma.shopItem.findFirst({ 
-    where: { id: Number(params.itemId) }, 
-    include: { images: true } 
-  });
+  const itemData = await getShopItemById(Number(params.itemId));
 
   if (!itemData) return <div></div>;
 

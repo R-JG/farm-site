@@ -2,7 +2,7 @@
 
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { NewShopItem } from '@/utils/types';
-import { createContent } from '@/utils/client';
+import { createContent } from '@/lib/client';
 
 type ShopItemRequest = Omit<NewShopItem, 'price'> & { price: string };
 

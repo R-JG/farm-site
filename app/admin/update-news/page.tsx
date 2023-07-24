@@ -1,24 +1,23 @@
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
-import { prisma } from '@/prisma/database';
 import { NewNewsPost } from '@/utils/types';
-import { createUploadSignature } from '@/utils/server';
+import { createUploadSignature } from '@/lib/server';
 import UpdateNewsInterface from '@/components/UpdateNewsInterface';
-import { deleteUploadedFile } from '@/utils/server';
+import { deleteUploadedFile } from '@/lib/server';
 import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_URL } from '@/utils/config';
+import { 
+  getUserByEmail, getAllNewsPosts, getNewsPostById, createNewsPost, 
+  createNewsPostImage, deleteNewsPostById, deleteAllNewsPostImagesByPostId 
+} from '@/lib/database';
 
 const UpdateNewsPage = async () => {
 
   const session = await getServerSession(options);
 
-  const sessionUser = (session?.user?.email) ? await prisma.user.findUnique({ 
-    where: { email: session.user.email } 
-  }) : null;
+  const sessionUser = (session?.user?.email) ? await getUserByEmail(session.user.email) : null;
 
-  const allPosts = await prisma.newsPost.findMany({ 
-    orderBy: { createdAt: 'desc' } 
-  });
+  const allPosts = await getAllNewsPosts();
 
   const createSignature = async (): Promise<null | { timestamp: number, signature: string }> => {
     'use server';
@@ -45,10 +44,8 @@ const UpdateNewsPage = async () => {
           uploadedImageIds.push(v);
         };
       });
-      const createdPost = await prisma.newsPost.create({ data: newPost });
-      await Promise.all(uploadedImageIds.map(id => prisma.newsPostImage.create({
-        data: { id, newsPostId: createdPost.id }
-      })));
+      const createdPost = await createNewsPost(newPost);
+      await Promise.all(uploadedImageIds.map(id => createNewsPostImage(id, createdPost.id)));
       revalidatePath('/');
       return { success: true };
     } catch (error) {
@@ -61,14 +58,11 @@ const UpdateNewsPage = async () => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
-      const postToDelete = await prisma.newsPost.findUnique({ where: { id: postId } });
+      const postToDelete = await getNewsPostById(postId);
       if (!postToDelete) return { success: false };
-      const associatedImages = await prisma.newsPostImage.findMany({ 
-        where: { newsPostId: postToDelete.id } 
-      });
-      await Promise.all(associatedImages.map(image => deleteUploadedFile(image.id)));
-      await prisma.newsPostImage.deleteMany({ where: { newsPostId: postToDelete.id } });
-      await prisma.newsPost.delete({ where: { id: postId } });
+      await Promise.all(postToDelete.images.map(image => deleteUploadedFile(image.id)));
+      await deleteAllNewsPostImagesByPostId(postToDelete.id);
+      await deleteNewsPostById(postToDelete.id);
       revalidatePath('/');
       return { success: true };
     } catch (error) {

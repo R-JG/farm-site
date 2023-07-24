@@ -3,7 +3,7 @@ import { NewsPost } from '@/utils/types';
 import ContentImage from './ContentImage';
 
 type Props = {
-  postData: NewsPost & { images: { id: string, newsPostId: number }[] }
+  postData: NewsPost
 };
 
 const SlideshowPost = ({ postData }: Props) => {

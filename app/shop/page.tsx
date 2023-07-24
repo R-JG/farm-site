@@ -1,13 +1,11 @@
 import ShopItemList from '@/components/ShopItemList';
-import { prisma } from '@/prisma/database';
+import { getAllShopItems } from '@/lib/database';
 
 export const revalidate = 60;
 
 const Shop = async () => {
 
-  const allShopItems = await prisma.shopItem.findMany({ 
-    include: { images: true } 
-  });
+  const allShopItems = await getAllShopItems();
 
   return (
     <main className='flex-grow flex flex-col justify-start items-center'>

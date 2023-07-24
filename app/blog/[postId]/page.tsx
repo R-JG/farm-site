@@ -1,17 +1,17 @@
-import { prisma } from '@/prisma/database';
+import { getAllBlogPostIds, getBlogPostById } from '@/lib/database';
 
 type Props = {
   params: { postId: string }
 };
 
 export const generateStaticParams = async () => {
-  const posts = await prisma.blogPost.findMany();
+  const posts = await getAllBlogPostIds();
   return posts.map(post => ({ postId: String(post.id) }));
 };
 
 const BlogPostPage = async ({ params }: Props) => {
 
-  const postData = await prisma.blogPost.findFirst({ where: { id: Number(params.postId) } });
+  const postData = await getBlogPostById(Number(params.postId));
 
   if (!postData) return <div></div>;
 

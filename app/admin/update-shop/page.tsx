@@ -1,24 +1,23 @@
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
-import { prisma } from '@/prisma/database';
 import { NewShopItem } from '@/utils/types';
-import { createUploadSignature } from '@/utils/server';
+import { createUploadSignature } from '@/lib/server';
 import UpdateShopInterface from '@/components/UpdateShopInterface';
-import { deleteUploadedFile } from '@/utils/server';
+import { deleteUploadedFile } from '@/lib/server';
 import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_URL } from '@/utils/config';
+import { 
+  getUserByEmail, getAllShopItems, getShopItemById, createShopItem, 
+  createShopItemImage, deleteShopItemById, deleteAllShopItemImagesByItemId 
+} from '@/lib/database';
 
 const UpdateShopPage = async () => {
 
   const session = await getServerSession(options);
 
-  const sessionUser = (session?.user?.email) ? await prisma.user.findUnique({ 
-    where: { email: session.user.email } 
-  }) : null;
+  const sessionUser = (session?.user?.email) ? await getUserByEmail(session.user.email) : null;
 
-  const allShopItems = await prisma.shopItem.findMany({ 
-    orderBy: { createdAt: 'desc' } 
-  });
+  const allShopItems = await getAllShopItems();
 
   const createSignature = async (): Promise<null | { timestamp: number, signature: string }> => {
     'use server';
@@ -26,7 +25,7 @@ const UpdateShopPage = async () => {
     return createUploadSignature();
   };
 
-  const createShopItem = async (itemUploadData: FormData): Promise<{ success: boolean }> => {
+  const createItem = async (itemUploadData: FormData): Promise<{ success: boolean }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
@@ -46,10 +45,8 @@ const UpdateShopPage = async () => {
           uploadedImageIds.push(v);
         };
       });
-      const createdItem = await prisma.shopItem.create({ data: newItem });
-      await Promise.all(uploadedImageIds.map(id => prisma.shopItemImage.create({
-        data: { id, shopItemId: createdItem.id }
-      })));
+      const createdItem = await createShopItem(newItem);
+      await Promise.all(uploadedImageIds.map(id => createShopItemImage(id, createdItem.id)));
       revalidatePath('/');
       return { success: true };
     } catch (error) {
@@ -62,14 +59,11 @@ const UpdateShopPage = async () => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
-      const itemToDelete = await prisma.shopItem.findUnique({ where: { id: itemId } });
+      const itemToDelete = await getShopItemById(itemId);
       if (!itemToDelete) return { success: false };
-      const associatedImages = await prisma.shopItemImage.findMany({ 
-        where: { shopItemId: itemToDelete.id } 
-      });
-      await Promise.all(associatedImages.map(image => deleteUploadedFile(image.id)));
-      await prisma.shopItemImage.deleteMany({ where: { shopItemId: itemToDelete.id } });
-      await prisma.shopItem.delete({ where: { id: itemId } });
+      await Promise.all(itemToDelete.images.map(image => deleteUploadedFile(image.id)));
+      await deleteAllShopItemImagesByItemId(itemToDelete.id);
+      await deleteShopItemById(itemToDelete.id);
       revalidatePath('/');
       return { success: true };
     } catch (error) {
@@ -85,7 +79,7 @@ const UpdateShopPage = async () => {
         publicUploadUrl={PUBLIC_CLOUDINARY_URL}
         allShopItems={allShopItems}
         createSignature={createSignature}
-        createShopItem={createShopItem}
+        createShopItem={createItem}
         deleteShopItem={deleteShopItem}
       />
     </main>
