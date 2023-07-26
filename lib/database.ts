@@ -38,26 +38,26 @@ export const getAllShopItemIds = cache(async () => prisma.shopItem.findMany({
   select: {id: true } 
 }));
 
-export const getShopItemById = cache(async (id: number) => prisma.shopItem.findUnique({ 
+export const getShopItemById = cache(async (id: string) => prisma.shopItem.findUnique({ 
   where: { id }, 
   include: { images: true } 
 }));
 
-export const getAllShopItemsByIds = cache(async (ids: number[]) => prisma.shopItem.findMany({ 
+export const getAllShopItemsByIds = cache(async (ids: string[]) => prisma.shopItem.findMany({ 
   where: { id: { in: ids } }
 }));
 
 export const createShopItem = async (data: NewShopItem) => prisma.shopItem.create({ data });
 
-export const createShopItemImage = async (imageId: string, shopItemId: number) => prisma.shopItemImage.create({
+export const createShopItemImage = async (imageId: string, shopItemId: string) => prisma.shopItemImage.create({
   data: { id: imageId, shopItemId }
 });
 
-export const deleteShopItemById = async (id: number) => prisma.shopItem.delete({ 
+export const deleteShopItemById = async (id: string) => prisma.shopItem.delete({ 
   where: { id } 
 });
 
-export const deleteAllShopItemImagesByItemId = async (shopItemId: number) => prisma.shopItemImage.deleteMany({ 
+export const deleteAllShopItemImagesByItemId = async (shopItemId: string) => prisma.shopItemImage.deleteMany({ 
   where: { shopItemId } 
 });
 

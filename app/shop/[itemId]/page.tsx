@@ -8,12 +8,12 @@ type Props = {
 
 export const generateStaticParams = async () => {
   const items = await getAllShopItemIds();
-  return items.map(item => ({ itemId: String(item.id) }))
+  return items.map(item => ({ itemId: item.id }))
 };
 
 const ShopItemPage = async ({ params }: Props) => {
 
-  const itemData = await getShopItemById(Number(params.itemId));
+  const itemData = await getShopItemById(params.itemId);
 
   if (!itemData) return <div></div>;
 

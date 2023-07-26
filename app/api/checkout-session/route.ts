@@ -1,6 +1,5 @@
 import Stripe from 'stripe';
 import stripe from '@/utils/stripe';
-import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllShopItemsByIds } from '@/lib/database';
 import { CartItem } from '@/utils/types';
@@ -12,10 +11,14 @@ const parseCartItemArray = (body: unknown): CartItem[] => {
     if (!prop || (typeof prop !== 'number')) throw new Error(errorMessage);
     return prop;
   };
+  const parseString = (prop: unknown): string => {
+    if (!prop || (typeof prop !== 'string')) throw new Error(errorMessage);
+    return prop;
+  };
   const parseCartItem = (params: unknown): CartItem => {
     if (!params || (typeof params !== 'object') 
     || !('shopItemId' in params) || !('quantity' in params)) throw new Error(errorMessage);
-    return { shopItemId: parseNumber(params.shopItemId), quantity: parseNumber(params.quantity) };
+    return { shopItemId: parseString(params.shopItemId), quantity: parseNumber(params.quantity) };
   };
   if (!Array.isArray(body)) throw new Error(errorMessage);
   return body.map(el => parseCartItem(el));
@@ -37,7 +40,7 @@ export const POST = async (request: NextRequest): Promise<Response> => {
     };
     let line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     await Promise.all(dbItems.map(async dbItem => {
-      const stripeProduct = await stripe.products.retrieve(String(dbItem.id));
+      const stripeProduct = await stripe.products.retrieve(dbItem.id);
       if (!stripeProduct.default_price) throw new Error(`Price is not defined for item id: ${dbItem.id}`);
       const price = ((typeof stripeProduct.default_price !== 'string') 
         ? stripeProduct.default_price.id : stripeProduct.default_price

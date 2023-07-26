@@ -8,7 +8,7 @@ datasource db {
 }
 
 model ShopItem {
-  id           Int       @id @default(autoincrement())
+  id           String    @id @default(cuid())
   name         String
   description  String
   price        Float
@@ -41,7 +41,7 @@ model BlogPost {
 
 model ShopItemImage {
   id           String    @id
-  shopItemId   Int
+  shopItemId   String
   shopItem     ShopItem  @relation(fields: [shopItemId], references: [id])
 }
 

@@ -49,7 +49,7 @@ const UpdateShopPage = async () => {
       const createdItem = await createShopItem(newItem);
       await Promise.all(uploadedImageIds.map(id => createShopItemImage(id, createdItem.id)));
       const createdStripeProduct = await stripe.products.create({ 
-        id: String(createdItem.id),
+        id: createdItem.id,
         name: createdItem.name,
         description: createdItem.description,
         images: uploadedImageIds.map(imageId => 
@@ -69,13 +69,13 @@ const UpdateShopPage = async () => {
     };
   };
 
-  const deleteShopItem = async (itemId: number): Promise<{ success: boolean }> => {
+  const deleteShopItem = async (itemId: string): Promise<{ success: boolean }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
       const itemToDelete = await getShopItemById(itemId);
       if (!itemToDelete) return { success: false };
-      const productDeleteResult = await stripe.products.update(String(itemToDelete.id), { active: false });
+      const productDeleteResult = await stripe.products.update(itemToDelete.id, { active: false });
       console.log('Stripe product delete (set to inactive) result: ', productDeleteResult);
       await Promise.all(itemToDelete.images.map(image => deleteUploadedFile(image.id)));
       await deleteAllShopItemImagesByItemId(itemToDelete.id);

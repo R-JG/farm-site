@@ -14,8 +14,7 @@ const CartInterface = ({ baseUrl }: Props) => {
   const test = async () => {
     try {
       const testCartItems: CartItem[] = [
-        { shopItemId: 26, quantity: 1 },
-        { shopItemId: 27, quantity: 2 }
+        { shopItemId: 'clkjcdn2n0000ijldbz2m10bd', quantity: 4 }
       ];
       const response = await fetch(`${baseUrl}/api/checkout-session`, { 
         method: 'POST', 

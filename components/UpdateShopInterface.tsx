@@ -10,7 +10,7 @@ type Props = {
   allShopItems: ShopItem[],
   createSignature: () => Promise<null | { timestamp: number, signature: string }>,
   createShopItem: (itemRequestData: FormData) => Promise<{ success: boolean }>,
-  deleteShopItem: (itemId: number) => Promise<{ success: boolean }>
+  deleteShopItem: (itemId: string) => Promise<{ success: boolean }>
 };
 
 const UpdateShopInterface = ({ 
@@ -24,14 +24,14 @@ const UpdateShopInterface = ({
   
   const [interfaceMode, setInterfaceMode] = useState<'create' | 'edit' | 'delete' | 'none'>('none');
   const [promptState, setPromptState] = useState<{ message: string, success: boolean } | null>(null);
-  const [itemToDeleteId, setItemToDeleteId] = useState<number | null>(null);
+  const [itemToDeleteId, setItemToDeleteId] = useState<string | null>(null);
   const [itemIsBeingDeleted, setItemIsBeingDeleted] = useState<boolean>(false);
 
   const handleCreateModeButton = (): void => {
     (interfaceMode !== 'create') ? setInterfaceMode('create') : setInterfaceMode('none')
   };
 
-  const handleDeleteModeButton = (itemId: number): void => {
+  const handleDeleteModeButton = (itemId: string): void => {
     if (itemIsBeingDeleted) return;
     setInterfaceMode('delete');
     setItemToDeleteId(itemId);
