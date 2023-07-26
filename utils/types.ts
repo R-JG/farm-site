@@ -16,3 +16,6 @@ export type NewBlogPost = Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt' | 'ima
 export type ShopItem = ShopItem_PrismaSchema & { images: ShopItemImage[] };
 
 export type NewShopItem = Omit<ShopItem, 'id' | 'createdAt' | 'updatedAt' | 'images'>;
+
+
+export type CartItem = { shopItemId: number, quantity: number };

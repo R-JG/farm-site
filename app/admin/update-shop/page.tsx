@@ -1,3 +1,4 @@
+import stripe from '@/utils/stripe';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth/next';
 import options from '@/app/api/auth/[...nextauth]/options';
@@ -47,6 +48,19 @@ const UpdateShopPage = async () => {
       });
       const createdItem = await createShopItem(newItem);
       await Promise.all(uploadedImageIds.map(id => createShopItemImage(id, createdItem.id)));
+      const createdStripeProduct = await stripe.products.create({ 
+        id: String(createdItem.id),
+        name: createdItem.name,
+        description: createdItem.description,
+        images: uploadedImageIds.map(imageId => 
+          `https://res.cloudinary.com/dsvixs5p2/image/upload/${imageId}`
+        ),
+        default_price_data: {
+          currency: 'cad',
+          unit_amount: (createdItem.price * 100)
+        }
+      });
+      console.log('Created a new Stripe product: ', createdStripeProduct);
       revalidatePath('/');
       return { success: true };
     } catch (error) {
@@ -61,6 +75,8 @@ const UpdateShopPage = async () => {
     try {
       const itemToDelete = await getShopItemById(itemId);
       if (!itemToDelete) return { success: false };
+      const productDeleteResult = await stripe.products.update(String(itemToDelete.id), { active: false });
+      console.log('Stripe product delete (set to inactive) result: ', productDeleteResult);
       await Promise.all(itemToDelete.images.map(image => deleteUploadedFile(image.id)));
       await deleteAllShopItemImagesByItemId(itemToDelete.id);
       await deleteShopItemById(itemToDelete.id);

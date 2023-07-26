@@ -43,6 +43,10 @@ export const getShopItemById = cache(async (id: number) => prisma.shopItem.findU
   include: { images: true } 
 }));
 
+export const getAllShopItemsByIds = cache(async (ids: number[]) => prisma.shopItem.findMany({ 
+  where: { id: { in: ids } }
+}));
+
 export const createShopItem = async (data: NewShopItem) => prisma.shopItem.create({ data });
 
 export const createShopItemImage = async (imageId: string, shopItemId: number) => prisma.shopItemImage.create({
