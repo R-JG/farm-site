@@ -1,6 +1,7 @@
+import { getAllShopItemIds, getShopItemById } from '@/lib/database';
 import ContentImage from '@/components/ContentImage';
 import ThumbnailGallery from '@/components/ThumbnailGallery';
-import { getAllShopItemIds, getShopItemById } from '@/lib/database';
+import AddToCartForm from '@/components/AddToCartForm';
 
 type Props = {
   params: { itemId: string }
@@ -39,9 +40,7 @@ const ShopItemPage = async ({ params }: Props) => {
         </h1>
         <div className='w-full mb-8 flex flex-row justify-between items-center'>
           <span>{`$${itemData.price}`}</span>
-          <button className='p-2 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'>
-            Add to cart
-          </button>
+          <AddToCartForm itemId={params.itemId} />
         </div>
         <p className='whitespace-pre-line'>
           {itemData.description}

@@ -20,11 +20,16 @@ const Header = () => {
         <HeaderRouteLink linkText='Blog' route='/blog' />
         <HeaderRouteLink linkText='About' route='/about' />
       </div>
-      <Image 
-        src={cart}
-        alt='Cart'
-        className='w-9 mx-4 opacity-80 pointer-events-none select-none'
-      />
+      <Link
+        href='/cart'
+        className='mx-4 hover:scale-105 transition-transform'
+      >
+        <Image 
+          src={cart}
+          alt='Cart'
+          className='w-9 opacity-80 pointer-events-none select-none'
+        />
+      </Link>
     </header>
   );
 };

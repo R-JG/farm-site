@@ -2,27 +2,8 @@ import Stripe from 'stripe';
 import stripe from '@/utils/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllShopItemsByIds } from '@/lib/database';
-import { CartItem } from '@/utils/types';
+import { parseCartItemArray } from '@/utils/validation';
 import { BASE_URL } from '@/utils/config';
-
-const parseCartItemArray = (body: unknown): CartItem[] => {
-  const errorMessage = 'Cart session request body is missing or contains incorrect data';
-  const parseNumber = (prop: unknown): number => {
-    if (!prop || (typeof prop !== 'number')) throw new Error(errorMessage);
-    return prop;
-  };
-  const parseString = (prop: unknown): string => {
-    if (!prop || (typeof prop !== 'string')) throw new Error(errorMessage);
-    return prop;
-  };
-  const parseCartItem = (params: unknown): CartItem => {
-    if (!params || (typeof params !== 'object') 
-    || !('shopItemId' in params) || !('quantity' in params)) throw new Error(errorMessage);
-    return { shopItemId: parseString(params.shopItemId), quantity: parseNumber(params.quantity) };
-  };
-  if (!Array.isArray(body)) throw new Error(errorMessage);
-  return body.map(el => parseCartItem(el));
-};
 
 export const POST = async (request: NextRequest): Promise<Response> => {
   try {
