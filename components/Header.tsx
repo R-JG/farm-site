@@ -14,22 +14,21 @@ const Header = () => {
         className='max-w-sm mx-3 pointer-events-none select-none'
       />
       <div className='flex flex-row'>
-        <HeaderRouteLink linkText='News' route='/' />
-        <HeaderRouteLink linkText='Shop' route='/shop' />
-        <HeaderRouteLink linkText='Glamping' route='/glamping' />
-        <HeaderRouteLink linkText='Blog' route='/blog' />
-        <HeaderRouteLink linkText='About' route='/about' />
+        <HeaderRouteLink route='/' >News</HeaderRouteLink>
+        <HeaderRouteLink route='/shop' >Shop</HeaderRouteLink>
+        <HeaderRouteLink route='/glamping' >Glamping</HeaderRouteLink>
+        <HeaderRouteLink route='/blog' >Blog</HeaderRouteLink>
+        <HeaderRouteLink route='/about' >About</HeaderRouteLink>
       </div>
-      <Link
-        href='/cart'
-        className='mx-4 hover:scale-105 transition-transform'
+      <HeaderRouteLink
+        route='/cart'
       >
         <Image 
           src={cart}
           alt='Cart'
           className='w-9 opacity-80 pointer-events-none select-none'
         />
-      </Link>
+      </HeaderRouteLink>
     </header>
   );
 };
