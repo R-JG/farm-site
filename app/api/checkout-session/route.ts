@@ -33,7 +33,7 @@ export const POST = async (request: NextRequest): Promise<Response> => {
       mode: 'payment',
       line_items,
       success_url: `${BASE_URL}/cart/success`,
-      cancel_url: `${BASE_URL}/cart/canceled`
+      cancel_url: `${BASE_URL}/cart`
     });
     if (!session.url) {
       return new NextResponse('Error in creating a checkout session', { status: 500 });

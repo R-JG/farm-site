@@ -14,30 +14,58 @@ type Props = {
 
 const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
 
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartHasLoaded, setCartHasLoaded] = useState(false);
+  const [orderIsProcessing, setOrderIsProcessing] = useState(false);
   const [shopItemsInCart, setShopItemsInCart] = useState<(ShopItem & { quantity: number })[]>([]);
 
   const router = useRouter();
 
-  const getCartTotal = (): number => {
+  const getCartTotal = (): string => {
     let total = 0;
     for (const shopItem of shopItemsInCart) {
       total += (shopItem.price * shopItem.quantity);
     };
-    return total;
+    return total.toFixed(2);
   };
 
   const handleCheckoutButton = async (): Promise<void> => {
+    if (orderIsProcessing) return;
+    setOrderIsProcessing(true);
     try {
+      const cartItemData: CartItem[] = shopItemsInCart.map(item => (
+        { shopItemId: item.id, quantity: item.quantity }
+      ));
       const response = await fetch(`${baseUrl}/api/checkout-session`, { 
         method: 'POST', 
-        body: JSON.stringify(cartItems)
+        body: JSON.stringify(cartItemData)
       });
       const redirectUrl = await response.text();
       router.push(redirectUrl);
     } catch (error) {
       console.error(error);
+    } finally {
+      setOrderIsProcessing(false);
     };
+  };
+
+  const handleQuantityButton = (itemId: string, operation: '+' | '-'): void => {
+    const targetItemIndex = shopItemsInCart.findIndex(item => (item.id === itemId));
+    let updatedShopItems: (ShopItem & { quantity: number })[] = [...shopItemsInCart];
+    if (operation === '+') {
+      updatedShopItems[targetItemIndex].quantity++;
+    };
+    if (operation === '-') {
+      if (updatedShopItems[targetItemIndex].quantity <= 1) {
+        updatedShopItems.splice(targetItemIndex, 1);
+      } else {
+        updatedShopItems[targetItemIndex].quantity--;
+      };
+    };
+    const updatedCartStorage: CartItem[] = updatedShopItems.map(item => (
+      { shopItemId: item.id, quantity: item.quantity }
+    ));
+    localStorage.setItem('cart', JSON.stringify(updatedCartStorage));
+    setShopItemsInCart(updatedShopItems);
   };
 
   useEffect(() => {
@@ -57,25 +85,27 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
             };
           });
           localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-          setCartItems(updatedCartItems);
           setShopItemsInCart(shopItemDataForCart);
+          setCartHasLoaded(true);
         });
+      } else {
+        setCartHasLoaded(true);
       };
     };
     if (origin === 'checkout-success') {
       localStorage.removeItem('cart');
+      setCartHasLoaded(true);
     };
   }, [origin, findShopItemsForCart]);
 
+  if (origin === 'checkout-success') return (<div></div>);
+
   return (
-    <div>
-      <h1 className='text-2xl font-medium'>
-        Cart:
-      </h1>
+    <div className={`h-full p-9 rounded-2xl flex flex-col justify-start items-start ${(cartHasLoaded && (shopItemsInCart.length > 0)) && ' border-2 border-black '}`}>
       {shopItemsInCart.map(shopItem => 
       <div
         key={shopItem.id}
-        className='my-6 flex flex-row justify-start items-center'
+        className='my-2 flex flex-row justify-start items-center'
       >
         <div className='relative w-[10vw] aspect-square'>
           <ContentImage 
@@ -90,27 +120,57 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
           <span className='my-2 text-lg font-medium'>
             {shopItem.name}
           </span>
+          <div className='py-2 flex flex-row justify-start items-center'>
+            <span>Quantity:</span>
+            <div className='h-min mx-2 bg-blue-50 bg-opacity-50 rounded-md flex flex-row justify-center items-center'>
+              <button
+                name='-'
+                onClick={() => handleQuantityButton(shopItem.id, '-')}
+                className='px-3 py-1 bg-blue-100 bg-opacity-50 rounded-md hover:bg-blue-200 transition-colors'
+              >
+                -
+              </button>
+              <span className='py-1 px-3'>
+                {shopItem.quantity}
+              </span>
+              <button
+                name='+'
+                onClick={() => handleQuantityButton(shopItem.id, '+')}
+                className='px-3 py-1 bg-blue-100 bg-opacity-50 rounded-md hover:bg-blue-200 transition-colors'
+              >
+                +
+              </button>
+            </div>
+          </div>
           <span>
-            Quantity: {shopItem.quantity}
-          </span>
-          <span>
-            {`$${shopItem.price * shopItem.quantity}`}
-            {(shopItem.quantity > 1) ? `($${shopItem.price} each)` : ''}
+            <span>
+              {`$${(shopItem.price * shopItem.quantity).toFixed(2)}`}
+            </span>
+            {(shopItem.quantity > 1) &&
+            <span className='text-sm px-2 opacity-60'>
+              {`($${shopItem.price.toFixed(2)} each)`}
+            </span>}
           </span>
         </div>
       </div>)}
-      {(cartItems.length > 0) &&
+      {cartHasLoaded && (shopItemsInCart.length > 0) &&
       <div>
         <span>Total: ${getCartTotal()}</span>
         <button
           onClick={handleCheckoutButton}
           className='p-2 m-6 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
         >
-          Purchase
+          {(orderIsProcessing) ? 'Loading...' : 'Purchase'}
         </button>
       </div>}
-      {(cartItems.length === 0) && 
-      <h1>Cart is currently empty</h1>}
+      {cartHasLoaded && (shopItemsInCart.length === 0) && 
+      <span className='my-10'>
+        Your cart is currently empty
+      </span>}
+      {!cartHasLoaded && 
+      <span className='my-10'>
+        Loading cart...
+      </span>}
     </div>
   );
 };

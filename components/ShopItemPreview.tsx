@@ -24,7 +24,7 @@ const ShopItemPreview = ({ itemData }: Props) => {
           />}
         </div>
         <h1 className='w-52 my-2 font-medium'>{itemData.name}</h1>
-        <p>{`$${itemData.price}`}</p>
+        <p>{`$${itemData.price.toFixed(2)}`}</p>
       </Link>
     </div>
   );
