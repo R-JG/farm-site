@@ -44,7 +44,8 @@ export const getShopItemById = cache(async (id: string) => prisma.shopItem.findU
 }));
 
 export const getAllShopItemsByIds = cache(async (ids: string[]) => prisma.shopItem.findMany({ 
-  where: { id: { in: ids } }
+  where: { id: { in: ids } },
+  include: { images: true } 
 }));
 
 export const createShopItem = async (data: NewShopItem) => prisma.shopItem.create({ data });

@@ -67,7 +67,7 @@ const AddToCartForm = ({ itemId }: Props) => {
         Add To Cart
       </button>
       {cartHasBeenUpdated && 
-      <div className='p-1 mx-3 rounded-lg bg-blue-200 opacity-70'>
+      <div className=' text-blue-900 text-sm py-1 px-2 mx-3 rounded-lg bg-blue-200 opacity-60'>
         Added to cart
       </div>}
     </div>
