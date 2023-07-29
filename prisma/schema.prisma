@@ -41,6 +41,7 @@ model BlogPost {
 
 model ShopItemImage {
   id           String    @id
+  order        Int
   shopItemId   String
   shopItem     ShopItem  @relation(fields: [shopItemId], references: [id])
 }

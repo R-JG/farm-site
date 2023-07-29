@@ -47,7 +47,9 @@ const UpdateShopPage = async () => {
         };
       });
       const createdItem = await createShopItem(newItem);
-      await Promise.all(uploadedImageIds.map(id => createShopItemImage(id, createdItem.id)));
+      await Promise.all(uploadedImageIds.map((id, index) => 
+        createShopItemImage(id, createdItem.id, (index + 1))
+      ));
       const createdStripeProduct = await stripe.products.create({ 
         id: createdItem.id,
         name: createdItem.name,
