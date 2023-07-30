@@ -178,7 +178,7 @@ const UpdateShopInterface = ({
                     >
                       Cancel
                     </button>}
-                    <button className='p-2 mt-4 bg-blue-400 rounded active:bg-blue-100 hover:scale-105 transition-all'>
+                    <button className='p-2 my-4 bg-blue-400 rounded active:bg-blue-100 hover:scale-105 transition-all'>
                       {itemIsBeingEdited ? 'Updating...' : 'Update'}
                     </button>
                   </form>

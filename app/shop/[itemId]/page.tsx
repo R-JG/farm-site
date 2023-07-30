@@ -42,20 +42,14 @@ const ShopItemPage = async ({ params }: Props) => {
           <span>
             {`$${itemData.price.toFixed(2)}`}
           </span>
-          <div className='flex flex-row justify-end items-center'>
-            {(itemData.inventory !== null) && (itemData.inventory <= 5) && (itemData.inventory > 0) &&
-            <span className='mx-1 text-blue-900 opacity-60'>
-              {itemData.inventory} in stock
-            </span>}
-            {(itemData.inventory === 0) 
-            ? <span className='p-2 bg-blue-200 rounded'>
-              Out of stock
-            </span>
-            : <AddToCartForm 
-              itemId={itemData.id} 
-              itemInventory={itemData.inventory}
-            />}
-          </div>
+          {(itemData.inventory === 0) 
+          ? <span className='p-2 bg-blue-200 rounded'>
+            Out of stock
+          </span>
+          : <AddToCartForm 
+            itemId={itemData.id} 
+            itemInventory={itemData.inventory}
+          />}
         </div>
         <p className='whitespace-pre-line max-w-lg'>
           {itemData.description}

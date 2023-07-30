@@ -154,14 +154,21 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
         </div>
       </div>)}
       {cartHasLoaded && (shopItemsInCart.length > 0) &&
-      <div>
-        <span>Total: ${getCartTotal()}</span>
-        <button
-          onClick={handleCheckoutButton}
-          className='p-2 m-6 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
-        >
-          {(orderIsProcessing) ? 'Loading...' : 'Purchase'}
-        </button>
+      <div className='flex flex-col justify-start items-start'>
+        <div className='my-4 flex flex-row justify-start items-center'>
+          <span>
+            Total: ${getCartTotal()}
+          </span>
+          <button
+            onClick={handleCheckoutButton}
+            className='p-2 mx-6 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
+          >
+            {(orderIsProcessing) ? 'Loading...' : 'Purchase'}
+          </button>
+        </div>
+        <span className='m-0 text-sm opacity-60'>
+          *All prices are in Canadian dollars.
+        </span>
       </div>}
       {cartHasLoaded && (shopItemsInCart.length === 0) && 
       <span className='my-10'>
