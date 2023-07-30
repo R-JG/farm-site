@@ -94,7 +94,7 @@ const UpdateNewsInterface = ({
       </div>}
       {(interfaceMode !== 'create') && 
       <div className='py-4 border-t-2 border-black flex flex-col justify-start items-center'>
-        <p className='mb-4 text-xl font-medium underline'>Current posts on the news page:</p>
+        <p className='mb-4 text-xl font-medium'>Current posts on the news page:</p>
         <div className='flex flex-row justify-start items-start flex-wrap'>
           {allPosts.map(post => 
           <div 

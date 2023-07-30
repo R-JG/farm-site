@@ -62,6 +62,11 @@ export const deleteAllShopItemImagesByItemId = async (shopItemId: string) => pri
   where: { shopItemId } 
 });
 
+export const updateShopItemInventoryById = async (shopItemId: string, newInventory: number | null) => prisma.shopItem.update({
+  where: { id: shopItemId },
+  data: { inventory: newInventory }
+});
+
 
 
 export const getAllBlogPosts = cache(async () => prisma.blogPost.findMany({ 

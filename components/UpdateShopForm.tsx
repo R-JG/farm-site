@@ -4,7 +4,7 @@ import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { NewShopItem } from '@/utils/types';
 import { createContent } from '@/lib/client';
 
-type ShopItemRequest = Omit<NewShopItem, 'price'> & { price: string };
+type ShopItemRequest = Omit<NewShopItem, 'price' | 'inventory'> & { price: string, inventory: string };
 
 type Props = {
   publicUploadApiKey: string,
@@ -22,7 +22,7 @@ const UpdateShopForm = ({
   setPromptState
   }: Props) => {
 
-  const baseInputValues: ShopItemRequest = { name: '', description: '', price: '' };
+  const baseInputValues: ShopItemRequest = { name: '', description: '', price: '', inventory: '' };
 
   const [inputValues, setInputValues] = useState<ShopItemRequest>(baseInputValues);
   const [inputFiles, setInputFiles] = useState<File[]>([]);
@@ -65,6 +65,8 @@ const UpdateShopForm = ({
     };
   };
 
+  console.log(inputValues.inventory);
+
   return (
     <div>
       <h1 className='mb-2 text-lg font-medium'>
@@ -99,6 +101,15 @@ const UpdateShopForm = ({
             type='number'
             name='price'
             value={inputValues.price}
+            onChange={handleInputChange} 
+          />
+        </label>
+        <label className='pb-4'>
+          Inventory:
+          <input 
+            type='number'
+            name='inventory'
+            value={inputValues.inventory}
             onChange={handleInputChange} 
           />
         </label>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { ShopItem } from '@/utils/types';
 import UpdateShopForm from './UpdateShopForm';
 
@@ -10,7 +10,8 @@ type Props = {
   allShopItems: ShopItem[],
   createSignature: () => Promise<null | { timestamp: number, signature: string }>,
   createShopItem: (itemRequestData: FormData) => Promise<{ success: boolean }>,
-  deleteShopItem: (itemId: string) => Promise<{ success: boolean }>
+  deleteShopItem: (itemId: string) => Promise<{ success: boolean }>,
+  updateItemInventory: (itemId: string, newInventory: number | null) => Promise<{ success: boolean, inventory?: number | null }>
 };
 
 const UpdateShopInterface = ({ 
@@ -19,13 +20,17 @@ const UpdateShopInterface = ({
   allShopItems,
   createSignature,
   createShopItem,
-  deleteShopItem
+  deleteShopItem,
+  updateItemInventory
   }: Props) => {
   
   const [interfaceMode, setInterfaceMode] = useState<'create' | 'edit' | 'delete' | 'none'>('none');
   const [promptState, setPromptState] = useState<{ message: string, success: boolean } | null>(null);
   const [itemToDeleteId, setItemToDeleteId] = useState<string | null>(null);
   const [itemIsBeingDeleted, setItemIsBeingDeleted] = useState<boolean>(false);
+  const [itemToEditId, setItemToEditId] = useState<string | null>(null);
+  const [itemIsBeingEdited, setItemIsBeingEdited] = useState<boolean>(false);
+  const [inventoryInputValue, setInventoryInputValue] = useState('');
 
   const handleCreateModeButton = (): void => {
     (interfaceMode !== 'create') ? setInterfaceMode('create') : setInterfaceMode('none')
@@ -37,9 +42,20 @@ const UpdateShopInterface = ({
     setItemToDeleteId(itemId);
   };
 
+  const handleEditModeButton = (itemId: string): void => {
+    if (itemIsBeingEdited) return;
+    setInterfaceMode('edit');
+    setItemToEditId(itemId);
+  };
+
   const handleCancelDeleteButton = (): void => {
     setInterfaceMode('none');
     setItemToDeleteId(null);
+  };
+
+  const handleCancelEditButton = (): void => {
+    setInterfaceMode('none');
+    setItemToEditId(null);
   };
 
   const handleDeleteItemButton = async (): Promise<void> => {
@@ -50,7 +66,7 @@ const UpdateShopInterface = ({
       if (response.success) {
         setPromptState({ message: 'Successfully deleted the item', success: true });
       } else {
-        throw new Error('Server Error');
+        throw new Error(`Server error in deleting item ${itemToDeleteId}`);
       };
     } catch (error) {
       console.error(error);
@@ -59,6 +75,27 @@ const UpdateShopInterface = ({
       setItemToDeleteId(null);
       setInterfaceMode('none');
       setItemIsBeingDeleted(false);
+    };
+  };
+
+  const handleUpdateInventoryForm = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+    if (!itemToEditId || itemIsBeingEdited) return;
+    setItemIsBeingEdited(true);
+    try {
+      const newInventory: number | null = (inventoryInputValue === '') ? null : Number(inventoryInputValue);
+      const updateResult = await updateItemInventory(itemToEditId, newInventory);
+      if (!updateResult.success) {
+        throw new Error(`Server error in updating the inventory for item ${itemToDeleteId}`);
+      };
+    } catch (error) {
+      console.error(error);
+      setPromptState({ message: 'There was an error in updating the inventory', success: false });
+    } finally {
+      setItemToEditId(null);
+      setInterfaceMode('none');
+      setItemIsBeingEdited(false);
+      setInventoryInputValue('');
     };
   };
 
@@ -94,47 +131,96 @@ const UpdateShopInterface = ({
       </div>}
       {(interfaceMode !== 'create') && 
       <div className='py-4 border-t-2 border-black flex flex-col justify-start items-center'>
-        <p className='mb-4 text-xl font-medium underline'>Current items on the shop page:</p>
+        <p className='mb-4 text-xl font-medium'>Current items on the shop page:</p>
         <div className='flex flex-row justify-start items-start flex-wrap'>
           {allShopItems.map(item => 
           <div 
             key={item.id}
-            className=' max-w-sm p-4 m-4 border-black border-2 rounded-2xl'
+            className='w-fit p-4 m-4 border-black border-2 rounded-2xl flex flex-col justify-start items-start'
           >
-            <div>
-              <h1 className='text-lg font-medium mb-2'>
-                {item.name}
-              </h1>
-              <p className=' line-clamp-3'>
-                {item.description}
-              </p>
-            </div>
-            <div className='flex flex-row justify-center items-center'>
-              {((interfaceMode === 'delete') && (item.id === itemToDeleteId)) 
-              ? <div className='p-2 mt-4 rounded-2xl border-red-600 border-4'>
-                <p className='font-medium mx-4 text-red-600'>
-                  Delete this item?
-                </p>
-                {!itemIsBeingDeleted && 
-                <button 
-                  onClick={handleCancelDeleteButton}
-                  className='p-2 m-4 bg-blue-200 rounded hover:scale-105 transition-transform'
+            <span className='text-lg font-medium mb-2'>
+              {item.name}
+            </span>
+            <p className='max-w-sm line-clamp-3'>
+              {item.description}
+            </p>
+            <span className='font-medium mt-4'>
+              Current inventory:
+              <span className='mx-2'>
+                {item.inventory ?? 'unlimited'}
+              </span>
+            </span>
+            <div className='self-center flex flex-row justify-center items-center'>
+              <div>
+                {((interfaceMode === 'edit') && (item.id === itemToEditId)) &&
+                <div className='p-2 mt-4 rounded-2xl border-blue-400 border-4'>
+                  <p>
+                    Set a new inventory value:
+                  </p>
+                  <p className='text-xs mx-2'>
+                    (leave blank for unlimited)
+                  </p>
+                  <form
+                    onSubmit={handleUpdateInventoryForm}
+                    className=''
+                  >
+                    {!itemIsBeingEdited && 
+                    <input 
+                      type='number'
+                      value={inventoryInputValue}
+                      onChange={e => setInventoryInputValue(e.currentTarget.value)} 
+                      className='block max-w-[7rem] mt-2 mx-4'
+                    />}
+                    {!itemIsBeingEdited && 
+                    <button 
+                      onClick={handleCancelEditButton}
+                      className='inline p-2 m-4 bg-blue-200 rounded hover:scale-105 transition-transform'
+                    >
+                      Cancel
+                    </button>}
+                    <button className='p-2 mt-4 bg-blue-400 rounded active:bg-blue-100 hover:scale-105 transition-all'>
+                      {itemIsBeingEdited ? 'Updating...' : 'Update'}
+                    </button>
+                  </form>
+                </div>}
+                {!(interfaceMode === 'delete' && item.id === itemToDeleteId) &&
+                !(interfaceMode === 'edit' && item.id === itemToEditId) &&
+                <button
+                  onClick={() => handleEditModeButton(item.id)}
+                  className='p-2 m-4 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'
                 >
-                  Cancel
+                  Update Inventory
                 </button>}
-                <button 
-                  onClick={handleDeleteItemButton}
-                  className='p-2 m-4 bg-red-400 rounded hover:scale-105 transition-transform'
-                >
-                  {itemIsBeingDeleted ? 'Deleting...' : 'Delete'}
-                </button>
               </div>
-              : <button 
-                onClick={() => handleDeleteModeButton(item.id)}
-                className='p-2 m-4 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'
-              >
-                Delete
-              </button>}
+              <div>
+                {((interfaceMode === 'delete') && (item.id === itemToDeleteId)) &&
+                <div className='p-2 mt-4 rounded-2xl border-red-600 border-4'>
+                  <p className='font-medium mx-4 text-red-600'>
+                    Delete this item?
+                  </p>
+                  {!itemIsBeingDeleted && 
+                  <button 
+                    onClick={handleCancelDeleteButton}
+                    className='p-2 m-4 bg-blue-200 rounded hover:scale-105 transition-transform'
+                  >
+                    Cancel
+                  </button>}
+                  <button 
+                    onClick={handleDeleteItemButton}
+                    className='p-2 m-4 bg-red-400 rounded hover:scale-105 transition-transform'
+                  >
+                    {itemIsBeingDeleted ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>}
+                {!(interfaceMode === 'edit' && item.id === itemToEditId) &&
+                !(interfaceMode === 'delete' && item.id === itemToDeleteId) &&
+                <button 
+                  onClick={() => handleDeleteModeButton(item.id)}
+                  className='p-2 m-4 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'
+                >
+                  Delete
+                </button>}
+              </div>
             </div>
           </div>)}
         </div>

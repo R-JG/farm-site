@@ -9,7 +9,8 @@ import { deleteUploadedFile } from '@/lib/server';
 import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_URL } from '@/utils/config';
 import { 
   getUserByEmail, getAllShopItems, getShopItemById, createShopItem, 
-  createShopItemImage, deleteShopItemById, deleteAllShopItemImagesByItemId 
+  createShopItemImage, deleteShopItemById, deleteAllShopItemImagesByItemId, 
+  updateShopItemInventoryById 
 } from '@/lib/database';
 
 const UpdateShopPage = async () => {
@@ -34,14 +35,18 @@ const UpdateShopPage = async () => {
       let newItem: NewShopItem = {
         name: '',
         description: '',
-        price: 0
+        price: 0,
+        inventory: null
       }; 
       let uploadedImageIds: string[] = [];
       formDataArray.forEach(([k, v]) => {
         if (k === 'price') {
           newItem[k] = Number(v);
+        } else if (k === 'inventory') {
+          const inventoryValue: number | null = (v === '') ? null : Number(v);
+          newItem[k] = inventoryValue;
         } else if ((k in newItem) && (typeof v === 'string')) {
-          newItem[k as keyof Omit<NewShopItem, 'price'>] = v;
+          newItem[k as keyof Omit<NewShopItem, 'price' | 'inventory'>] = v;
         } else if ((k === 'imageIds') && (typeof v === 'string')) {
           uploadedImageIds.push(v);
         };
@@ -63,7 +68,8 @@ const UpdateShopPage = async () => {
         }
       });
       console.log('Created a new Stripe product: ', createdStripeProduct);
-      revalidatePath('/');
+      revalidatePath('/shop');
+      revalidatePath('/admin/update-shop');
       return { success: true };
     } catch (error) {
       console.error(error);
@@ -82,8 +88,26 @@ const UpdateShopPage = async () => {
       await Promise.all(itemToDelete.images.map(image => deleteUploadedFile(image.id)));
       await deleteAllShopItemImagesByItemId(itemToDelete.id);
       await deleteShopItemById(itemToDelete.id);
-      revalidatePath('/');
+      revalidatePath('/shop');
+      revalidatePath('/admin/update-shop');
       return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    };
+  };
+
+  const updateItemInventory = async (
+    itemId: string, 
+    newInventory: number | null
+  ): Promise<{ success: boolean, inventory?: number | null }> => {
+    'use server';
+    if (sessionUser?.role !== 'ADMIN') return { success: false };
+    try {
+      const updatedShopItem = await updateShopItemInventoryById(itemId, newInventory);
+      revalidatePath('/shop');
+      revalidatePath('/admin/update-shop');
+      return { success: true, inventory: updatedShopItem.inventory };
     } catch (error) {
       console.error(error);
       return { success: false };
@@ -99,6 +123,7 @@ const UpdateShopPage = async () => {
         createSignature={createSignature}
         createShopItem={createItem}
         deleteShopItem={deleteShopItem}
+        updateItemInventory={updateItemInventory}
       />
     </main>
   );

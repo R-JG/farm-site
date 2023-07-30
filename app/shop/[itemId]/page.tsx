@@ -34,15 +34,30 @@ const ShopItemPage = async ({ params }: Props) => {
         imageType='admin-content'
         images={itemData.images.map(image => image.id)}
       />}
-      <div className='min-w-[30rem] max-w-lg p-4 mr-12 mt-16 flex flex-col justify-start items-start'>
-        <h1 className=' text-xl font-semibold mb-3'>
+      <div className='min-w-[30rem] p-4 mr-12 mt-16 flex flex-col justify-start items-start'>
+        <h1 className='text-xl font-semibold mb-3'>
           {itemData.name}
         </h1>
         <div className='w-full mb-8 flex flex-row justify-between items-center'>
-          <span>{`$${itemData.price.toFixed(2)}`}</span>
-          <AddToCartForm itemId={params.itemId} />
+          <span>
+            {`$${itemData.price.toFixed(2)}`}
+          </span>
+          <div className='flex flex-row justify-end items-center'>
+            {(itemData.inventory !== null) && (itemData.inventory <= 5) && (itemData.inventory > 0) &&
+            <span className='mx-1 text-blue-900 opacity-60'>
+              {itemData.inventory} in stock
+            </span>}
+            {(itemData.inventory === 0) 
+            ? <span className='p-2 bg-blue-200 rounded'>
+              Out of stock
+            </span>
+            : <AddToCartForm 
+              itemId={itemData.id} 
+              itemInventory={itemData.inventory}
+            />}
+          </div>
         </div>
-        <p className='whitespace-pre-line'>
+        <p className='whitespace-pre-line max-w-lg'>
           {itemData.description}
         </p>
       </div>

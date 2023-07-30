@@ -12,6 +12,7 @@ model ShopItem {
   name         String
   description  String
   price        Float
+  inventory    Int?
   images       ShopItemImage[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt

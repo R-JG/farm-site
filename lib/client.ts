@@ -47,7 +47,7 @@ export const createContent = async (
         imageIds.push(responseData.public_id);
         resolve(undefined);
       } else {
-        reject('public_id property is missing from the response data');
+        reject('The property public_id is missing from the image upload response data');
       };
     });
   }))); 

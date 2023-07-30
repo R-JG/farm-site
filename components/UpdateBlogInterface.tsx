@@ -94,7 +94,7 @@ const UpdateBlogInterface = ({
       </div>}
       {(interfaceMode !== 'create') && 
       <div className='py-4 border-t-2 border-black flex flex-col justify-start items-center'>
-        <p className='mb-4 text-xl font-medium underline'>Current blog posts:</p>
+        <p className='mb-4 text-xl font-medium'>Current blog posts:</p>
         <div className='flex flex-row justify-start items-start flex-wrap'>
           {allBlogPosts.map(post => 
           <div 

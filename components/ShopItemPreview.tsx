@@ -24,7 +24,13 @@ const ShopItemPreview = ({ itemData }: Props) => {
           />}
         </div>
         <h1 className='w-52 my-2 font-medium'>{itemData.name}</h1>
-        <p>{`$${itemData.price.toFixed(2)}`}</p>
+        <div className='flex flex-row'>
+          <p>{`$${itemData.price.toFixed(2)}`}</p>
+          {(itemData.inventory === 0) && 
+          <span className='text-sm py-1 px-2 mx-4 bg-blue-200 rounded-md'>
+            Out of stock
+          </span>}
+        </div>
       </Link>
     </div>
   );
