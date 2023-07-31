@@ -167,6 +167,7 @@ const UpdateShopInterface = ({
                     {!itemIsBeingEdited && 
                     <input 
                       type='number'
+                      min={0}
                       value={inventoryInputValue}
                       onChange={e => setInventoryInputValue(e.currentTarget.value)} 
                       className='block max-w-[7rem] mt-2 mx-4'

@@ -52,6 +52,10 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
     const targetItemIndex = shopItemsInCart.findIndex(item => (item.id === itemId));
     let updatedShopItems: (ShopItem & { quantity: number })[] = [...shopItemsInCart];
     if (operation === '+') {
+      const itemInventory = shopItemsInCart[targetItemIndex].inventory;
+      if ((itemInventory !== null) && ((updatedShopItems[targetItemIndex].quantity + 1) > itemInventory)) {
+        return;
+      };
       updatedShopItems[targetItemIndex].quantity++;
     };
     if (operation === '-') {
@@ -79,9 +83,12 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
           let shopItemDataForCart: (ShopItem & { quantity: number })[] = [];
           cartStorageItems.forEach(cartItem => {
             const itemInDb = shopItemsInDb.find(shopItem => (shopItem.id === cartItem.shopItemId));
-            if (itemInDb) {
+            if (itemInDb && (itemInDb.inventory !== 0)) {
+              if ((itemInDb.inventory !== null) && (cartItem.quantity > itemInDb.inventory)) {
+                cartItem.quantity = itemInDb.inventory;
+              };
               updatedCartItems.push(cartItem);
-              shopItemDataForCart.push({ ...itemInDb, quantity: cartItem.quantity })
+              shopItemDataForCart.push({ ...itemInDb, quantity: cartItem.quantity });
             };
           });
           localStorage.setItem('cart', JSON.stringify(updatedCartItems));

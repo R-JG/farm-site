@@ -43,8 +43,10 @@ const AddToCartForm = ({ itemId, itemInventory }: Props) => {
     } else {
       updatedCart[indexOfItemInCart].quantity += quantityInputValue;
     };
-    if ((itemInventory !== null) && (indexOfItemInCart !== -1) 
-    && (updatedCart[indexOfItemInCart].quantity >= itemInventory)) {
+    const updatedIndexOfItemInCart = (
+      (indexOfItemInCart === -1) ? (updatedCart.length - 1) : indexOfItemInCart
+    );
+    if ((itemInventory !== null) && (updatedCart[updatedIndexOfItemInCart].quantity >= itemInventory)) {
       setQuantityInputValue(0);
     } else {
       setQuantityInputValue(1);
