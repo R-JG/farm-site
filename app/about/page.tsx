@@ -8,14 +8,14 @@ const About = () => {
         <Image 
           src={lizAndJohn} 
           alt='Liz and John'
-          className='max-w-lg m-9 rounded-2xl' 
+          className='max-w-[34.5rem] m-9 rounded-2xl' 
         />
         <div className='max-w-lg m-8'>
           <h1 className='text-2xl font-medium mb-3'>
             Meet Liz & John
           </h1>
-          <p>
-            When the pandemic struck and Liz&apos;s pub was forced to close we decided to take a giant leap into a new life together. John has had a lifelong love of plants and a 35 year career as a landscape gardener. Liz has grown vegetables in her backyard garden for many years, and has always been impassioned by movements to support local food systems that shorten the supply chain and respect the delicate balance of nature. At Coyote Song Farm & Forest we combine our complementary skill sets growing vegetables, herbs, fruit and flowers using organic principles, building healthy soil and protecting our environment.
+          <p className=' '>
+            Begun in 2020 as a result of a “Covid career change” the farm is an evolving project in which Liz and John are constantly learning about growing food and flowers according to organic and regenerative farming principles. We do not use conventional chemical inputs and are learning techniques to encourage healthy, living soil such as cover cropping, incorporating organic materials regularly and maintaining living pathways. Our goal is to scale the farm so that we can support ourselves growing healthy, fresh and beautiful food and flowers on a small scale, using as little fossil fuel as possible. It takes a lot of hard work and there is much to learn. We get tremendous satisfaction from feeding ourselves, our families and community with healthy fresh produce and from producing beautiful blooms to brighten peoples days.
           </p>
         </div>
       </div>

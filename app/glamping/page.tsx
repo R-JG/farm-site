@@ -19,7 +19,7 @@ const GlampingPage = () => {
           Camp in comfort on the farm!
         </h1>
         <p>
-          Nestled in the back field we have created a cozy spot for a farmstay escape. Our 5 m diameter bell tents have queen sized beds so there is no sleeping on the ground here! We have a camp kitchen equipped with all of the utensils, dishes and pots and pans you need to cook up a feast. The compost toilet is located in the nicest outhouse we could build. Just bring food, drink and clothes and enjoy an escape from the city just a little over an hour from Toronto!
+          Our farm stay “glamping” site is nestled away in a secluded field set back on the property. With beautifully crafted kitchen, dining and outhouse structures and a fantastic fire pit complete with cooking grill and small stone oven as well as a propane bbq and burners it has everything you need for a relaxing and comfortable camping experience. Our 5 m diameter bell tent has a comfy queen sized bed and a cozy duvet and pillows. We supply linens, water and firewood, just bring food, drink and clothes and enjoy a peaceful escape just a little over an hour from Toronto!
         </p>
         <a 
           href='https://www.airbnb.ca/rooms/52457042'

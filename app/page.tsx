@@ -24,9 +24,9 @@ const Home = async () => {
         </div>
       </div>
       <div className='h-[75vh] w-full mt-[9rem] flex flex-col justify-start items-center'>
-        <div className='w-[45%] px-12 py-5 bg-blue-100 bg-opacity-80 rounded-2xl shadow-md flex flex-row justify-center items-center'>
-          <p className='text-lg mx-4 leading-5'>
-            At Coyote Song Farm & Forest we grow produce & flowers with focused attention to building living soil.
+        <div className='w-[50%] px-12 py-6 bg-blue-50 rounded-2xl shadow-md flex flex-row justify-center items-center'>
+          <p className='mx-4'>
+            Coyote Song Farm & Forest is a small scale market garden farm in Erin, Ontario growing fresh produce and flowers according to organic principles with a focus on the development of healthy living soil. We offer a small CSA, flower subscriptions and farm stay camping experiences.
           </p>
           <Image 
             src={wheelbarrow}

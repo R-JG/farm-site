@@ -14,7 +14,7 @@ const Slideshow = async ({ allNewsPosts }: Props) => {
   return (
     <div 
       style={{ width: postWidthStyle }} 
-      className='relative bg-blue-100 overflow-hidden shadow-md'
+      className='relative bg-white overflow-hidden shadow-md'
     >
       <SlideshowInterface 
         postAmount={allNewsPosts.length}
