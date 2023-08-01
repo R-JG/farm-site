@@ -70,6 +70,10 @@ const UpdateNewsForm = ({
       </h1>
       <div className='text-sm px-8 pb-4 max-w-lg'>
         <h1>Note:</h1>
+        <p>For images:</p>
+        <p>The images are hosted on Cloudinary, and with the current free plan, the maximum size for a single file is 10mb. So if the image file is larger the post will not be created. You can reduce the file size of an image with an image editing program, or there is probably even a website that you can use for this purpose.</p>
+        <p>Also, the image will be sized to fit into a square on the site, so if the image in the file is not a square, it will get cropped. The best thing to do would be to crop it yourself with an image editing program to make sure that it displays the way that you want.</p>
+        <p>For links:</p>
         <p>The link route can either be a link to a page on this site or to an external site, or blank for no link. For an external site, just copy the whole url and paste it in. For a page on this site, you will need to copy only the portion of the url that looks something like this:  /shop  or  /blog  or  /glamping  and anything that comes after this part of the url, e.g. a shop item might look like:  /shop/5</p>
         <p>The link text is just the text that the button displays.</p>
       </div>

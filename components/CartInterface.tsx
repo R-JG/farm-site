@@ -35,7 +35,7 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
       const cartItemData: CartItem[] = shopItemsInCart.map(item => (
         { shopItemId: item.id, quantity: item.quantity }
       ));
-      const response = await fetch(`${baseUrl}/api/checkout-session`, { 
+      const response = await fetch(`${baseUrl}/api/stripe/checkout-session`, { 
         method: 'POST', 
         body: JSON.stringify(cartItemData)
       });
