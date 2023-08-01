@@ -67,6 +67,11 @@ export const updateShopItemInventoryById = async (shopItemId: string, newInvento
   data: { inventory: newInventory }
 });
 
+export const decrementShopItemInventoryById = async (shopItemId: string, amountToDecrease: number) => prisma.shopItem.update({ 
+  where: { id: shopItemId }, 
+  data: { inventory: { decrement: amountToDecrease } } 
+});
+
 
 
 export const getAllBlogPosts = cache(async () => prisma.blogPost.findMany({ 
