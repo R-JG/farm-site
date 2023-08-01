@@ -6,18 +6,11 @@ import { STRIPE_WEBHOOK_SECRET } from '@/utils/config';
 export const POST = async (request: NextRequest): Promise<Response> => {
   try {
     const webhookSignature = request.headers.get('stripe-signature');
-
-    console.log('SIGNATURE ---> ', webhookSignature);
-
     if (!webhookSignature) {
       return new NextResponse('signature is missing', { status: 401 });
     };
     const payload = await request.text();
     const event = stripe.webhooks.constructEvent(payload, webhookSignature, STRIPE_WEBHOOK_SECRET);
-
-    // const event = await request.json();
-    console.log('EVENTOBJECT ---> ', event.data.object);
-    
     if (event.type === 'checkout.session.completed') {
       const checkoutSessionCompleted = event.data.object as any;
       const expandedSession = await stripe.checkout.sessions.retrieve(
