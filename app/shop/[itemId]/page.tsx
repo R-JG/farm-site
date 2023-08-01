@@ -7,6 +7,8 @@ type Props = {
   params: { itemId: string }
 };
 
+export const revalidate = 0;
+
 export const generateStaticParams = async () => {
   const items = await getAllShopItemIds();
   return items.map(item => ({ itemId: item.id }))

@@ -19,7 +19,7 @@ export const POST = async (request: NextRequest): Promise<Response> => {
           console.log('PRODUCT QUANTITY --> ', lineItem.quantity);
 
           return prisma.shopItem.update({ 
-            where: { id: lineItem.price.product, inventory: { not: null } }, 
+            where: { id: lineItem.price.product }, 
             data: { inventory: { decrement: lineItem.quantity } } });
         }));
         console.log('The following inventory updates have been applied: ', inventoryUpdates);
