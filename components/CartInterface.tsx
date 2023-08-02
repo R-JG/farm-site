@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ShopItem, CartItem } from '@/utils/types';
 import { parseCartItemArray } from '@/utils/validation';
 import ContentImage from './ContentImage';
@@ -178,9 +179,17 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
         </span>
       </div>}
       {cartHasLoaded && (shopItemsInCart.length === 0) && 
-      <span className='my-10'>
-        Your cart is currently empty
-      </span>}
+      <div className='flex flex-col justify-start items-center'>
+        <span className='my-4'>
+          Your cart is currently empty
+        </span>
+        <Link
+          href='/shop'
+          className='p-2 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'
+        >
+          Go to shop
+        </Link>
+      </div>}
       {!cartHasLoaded && 
       <span className='my-10'>
         Loading cart...
