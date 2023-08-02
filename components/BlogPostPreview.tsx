@@ -12,12 +12,18 @@ const BlogPostPreview = ({ postData }: Props) => {
         href={`/blog/${postData.id}`}
         className='w-full h-full p-8 flex flex-col justify-start items-start overflow-hidden '
       >
-        <h1 className='text-xl font-medium line-clamp-1'>{postData.title}</h1>
-        <h2>{postData.date}</h2>
+        <h1 className='text-xl font-medium line-clamp-1'>
+          {postData.title}
+        </h1>
+        <h2>
+          {postData.date}
+        </h2>
         <p className='my-4 line-clamp-3'>
           {postData.content}
         </p>
-        <h3 className='p-1 my-2 rounded bg-blue-50'>Read More</h3>
+        <h3 className='p-2 my-2 rounded bg-blue-200'>
+          Read More
+        </h3>
       </Link>
     </div>
   );
