@@ -31,7 +31,10 @@ export const deleteAllNewsPostImagesByPostId = async (newsPostId: number) => pri
 
 export const getAllShopItems = cache(async () => prisma.shopItem.findMany({ 
   orderBy: { createdAt: 'desc' },
-  include: { images: { orderBy: { order: 'asc' } } }
+  include: { 
+    price: { orderBy: { amount: 'asc' } },
+    images: { orderBy: { order: 'asc' } } 
+  }
 }));
 
 export const getAllShopItemIds = cache(async () => prisma.shopItem.findMany({ 
@@ -40,12 +43,18 @@ export const getAllShopItemIds = cache(async () => prisma.shopItem.findMany({
 
 export const getShopItemById = cache(async (id: string) => prisma.shopItem.findUnique({ 
   where: { id }, 
-  include: { images: { orderBy: { order: 'asc' } } } 
+  include: { 
+    price: { orderBy: { amount: 'asc' } },
+    images: { orderBy: { order: 'asc' } } 
+  } 
 }));
 
 export const getAllShopItemsByIds = cache(async (ids: string[]) => prisma.shopItem.findMany({ 
   where: { id: { in: ids } },
-  include: { images: { orderBy: { order: 'asc' } } } 
+  include: { 
+    price: { orderBy: { amount: 'asc' } },
+    images: { orderBy: { order: 'asc' } } 
+  } 
 }));
 
 export const createShopItem = async (data: NewShopItem) => prisma.shopItem.create({ data });
@@ -54,8 +63,16 @@ export const createShopItemImage = async (imageId: string, shopItemId: string, o
   data: { id: imageId, shopItemId, order }
 });
 
+export const createShopItemPrice = async (shopItemId: string, stripeId: string, amount: number) => prisma.shopItemPrice.create({
+  data: { shopItemId, stripeId, amount }
+});
+
 export const deleteShopItemById = async (id: string) => prisma.shopItem.delete({ 
   where: { id } 
+});
+
+export const deleteAllShopItemPricesByItemId = async (shopItemId: string) => prisma.shopItemPrice.deleteMany({
+  where: { shopItemId } 
 });
 
 export const deleteAllShopItemImagesByItemId = async (shopItemId: string) => prisma.shopItemImage.deleteMany({ 

@@ -65,8 +65,6 @@ const UpdateShopForm = ({
     };
   };
 
-  console.log(inputValues.inventory);
-
   return (
     <div>
       <h1 className='mb-2 text-lg font-medium'>
@@ -74,10 +72,14 @@ const UpdateShopForm = ({
       </h1>
       <div className='text-sm px-8 pb-4 max-w-lg'>
         <h1>Note:</h1>
-        <p>For images:</p>
+        <p className='font-semibold'>For images:</p>
         <p>The images are hosted on Cloudinary, and with the current free plan, the maximum size for a single file is 10mb. So if the image file is larger the post will not be created. You can reduce the file size of an image with an image editing program, or there is probably even a website that you can use for this purpose.</p>
         <p>When uploading multiple images, I don&apos;t think that there is any limit to the collective size of all the files.</p>
         <p>Also, the image will be formatted to fit into a square on the site, so if the image in the file is not a square, it will get cropped. The best thing to do would be to crop it yourself with an image editing program to make sure that it displays the way that you want.</p>
+        <p className='font-semibold'>For the price:</p>
+        <p>If you want the item to have multiple price options, type in each price separated with spaces.</p>
+        <p>Otherwise, just enter in one number for a single price</p>
+        <p>(and only use number characters or decimals)</p>
       </div>
       <form 
         onSubmit={handleSubmit}
@@ -105,7 +107,6 @@ const UpdateShopForm = ({
           Price:
           <input 
             required
-            type='number'
             name='price'
             value={inputValues.price}
             onChange={handleInputChange} 

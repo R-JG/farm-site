@@ -41,9 +41,21 @@ const ShopItemPage = async ({ params }: Props) => {
           {itemData.name}
         </h1>
         <div className='w-full mb-8 flex flex-row justify-between items-center'>
-          <span>
-            {`$${itemData.price.toFixed(2)}`}
-          </span>
+          <div className='flex flex-row justify-start items-center flex-wrap'>
+            {(itemData.price.length === 1) &&
+            <span>
+              {`$${itemData.price[0].amount.toFixed(2)}`}
+            </span>}
+            {(itemData.price.length > 1) &&
+            itemData.price.map((price, index) => 
+            <span
+              key={price.id}
+              style={(index === 0) ? { borderColor: '#bfdbfe' } : undefined}
+              className='p-1 rounded-xl border-[0.2rem] border-transparent'
+            >
+              {`$${price.amount.toFixed(2)}`}
+            </span>)}
+          </div>
           {(itemData.inventory === 0) 
           ? <span className='p-2 bg-blue-200 rounded'>
             Out of stock

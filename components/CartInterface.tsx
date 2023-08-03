@@ -24,7 +24,7 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
   const getCartTotal = (): string => {
     let total = 0;
     for (const shopItem of shopItemsInCart) {
-      total += (shopItem.price * shopItem.quantity);
+      total += (shopItem.price[0].amount * shopItem.quantity);
     };
     return total.toFixed(2);
   };
@@ -152,11 +152,11 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
           </div>
           <span>
             <span>
-              {`$${(shopItem.price * shopItem.quantity).toFixed(2)}`}
+              {`$${(shopItem.price[0].amount * shopItem.quantity).toFixed(2)}`}
             </span>
             {(shopItem.quantity > 1) &&
             <span className='text-sm px-2 opacity-60'>
-              {`($${shopItem.price.toFixed(2)} each)`}
+              {`($${shopItem.price[0].amount.toFixed(2)} each)`}
             </span>}
           </span>
         </div>
