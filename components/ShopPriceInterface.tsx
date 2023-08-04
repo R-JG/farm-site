@@ -5,23 +5,25 @@ import { ShopItemPrice } from '@/utils/types';
 import AddToCartForm from '@/components/AddToCartForm';
 
 type Props = {
-  pricesInStock: ShopItemPrice[]
+  itemPrices: ShopItemPrice[]
 };
 
-const ShopPriceInterface = ({ pricesInStock }: Props) => {
+const ShopPriceInterface = ({ itemPrices }: Props) => {
 
-  const [selectedPrice, setSelectedPrice] = useState<ShopItemPrice | undefined>(pricesInStock[0]);
+  const firstPriceInStock = itemPrices.find(item => ((item.inventory === null) || (item.inventory > 0)));
+
+  const [selectedPrice, setSelectedPrice] = useState<ShopItemPrice | undefined>(firstPriceInStock);
 
   if (!selectedPrice) return <div></div>;
 
   return (
     <div className='w-full mb-8 flex flex-row justify-between items-center'>
       <div className='flex flex-row justify-start items-center flex-wrap'>
-        {(pricesInStock.length === 1) &&
+        {(itemPrices.length === 1) &&
         <span>
-          {`$${pricesInStock[0].amount.toFixed(2)}`}
+          {`$${itemPrices[0].amount.toFixed(2)}`}
         </span>}
-        {(pricesInStock.length > 1) && pricesInStock.map((price, index) => 
+        {(itemPrices.length > 1) && itemPrices.map((price, index) => 
         <button
           key={price.id}
           onClick={() => setSelectedPrice(price)}

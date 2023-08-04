@@ -26,7 +26,7 @@ const UpdateShopForm = ({
 
   const [inputValues, setInputValues] = useState<ShopItemRequest>(baseInputValues);
   const [inputFiles, setInputFiles] = useState<File[]>([]);
-  const [inputPriceObjects, setInputPriceObjects] = useState<{ amount: string, inventory: string }[]>([]);
+  const [inputPriceObjects, setInputPriceObjects] = useState<{ amount: string, inventory: string }[]>([{ amount: '', inventory: '' }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +53,7 @@ const UpdateShopForm = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    if (isSubmitting) return;
+    if (isSubmitting || (inputPriceObjects.length === 0)) return;
     setIsSubmitting(true);
     try {
       const priceInputKVs: [string, string][] = inputPriceObjects.map(price => 
@@ -63,9 +63,6 @@ const UpdateShopForm = ({
       for (const kvPair of priceInputKVs) {
         valuesForFormData.push(kvPair);
       };
-
-      console.log('testarino', valuesForFormData);
-
       const response = await createContent(
         publicUploadApiKey, 
         publicUploadUrl, 
@@ -84,7 +81,7 @@ const UpdateShopForm = ({
       setPromptState({ message: 'Item creation was unsuccessful', success: false });
     } finally {
       setInputValues(baseInputValues);
-      setInputPriceObjects([]);
+      setInputPriceObjects([{ amount: '', inventory: '' }]);
       setIsSubmitting(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
@@ -137,7 +134,10 @@ const UpdateShopForm = ({
           />
         </label>
         {inputPriceObjects.map((priceObject, index) => 
-        <div key={index}>
+        <div 
+          key={index} 
+          className='my-2'
+        >
           <label className='pb-4'>
             Price:
             <input 
@@ -160,7 +160,7 @@ const UpdateShopForm = ({
           <button
             type='button'
             onClick={() => setInputPriceObjects(inputPriceObjects.filter((_, i) => (i !== index)))}
-            className='py-1 px-2 mx-2 bg-blue-200 rounded-2xl'
+            className='px-2 mx-2 bg-blue-200 rounded-2xl'
           >
             X
           </button>

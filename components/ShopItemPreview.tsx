@@ -33,7 +33,7 @@ const ShopItemPreview = ({ itemData }: Props) => {
         </h1>
         <div className='flex flex-row'>
           <div className='max-w-[13rem] flex flex-row flex-wrap'>
-            {pricesInStock.map(price => 
+            {(pricesInStock.length > 0) && itemData.price.map(price => 
             <span
               key={price.id}
               className='mr-4'
@@ -42,7 +42,7 @@ const ShopItemPreview = ({ itemData }: Props) => {
             </span>)}
           </div>
           {(pricesInStock.length === 0) && 
-          <span className='text-sm py-1 px-2 mx-4 bg-blue-200 rounded-md'>
+          <span className='text-sm py-1 px-2 bg-blue-200 rounded-md'>
             Out of stock
           </span>}
         </div>

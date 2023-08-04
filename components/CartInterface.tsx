@@ -89,20 +89,22 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
           let updatedCartItems: CartItem[] = [];
           let cartStateData: CartItemData[] = [];
           cartStorageItems.forEach(cartItem => {
-            const shopItemInDb = shopItemsInDb.find(shopItem => (shopItem.id === cartItem.shopItemId));
-            if (shopItemInDb) {
-              const priceInDb = shopItemInDb.price.find(price => (price.id === cartItem.priceId));
-              if (priceInDb) {
-                if ((priceInDb.inventory !== null) && (cartItem.quantity > priceInDb.inventory)) {
-                  cartItem.quantity = priceInDb.inventory;
+            if (cartItem.quantity > 0) {
+              const shopItemInDb = shopItemsInDb.find(shopItem => (shopItem.id === cartItem.shopItemId));
+              if (shopItemInDb) {
+                const priceInDb = shopItemInDb.price.find(price => (price.id === cartItem.priceId));
+                if (priceInDb) {
+                  if ((priceInDb.inventory !== null) && (cartItem.quantity > priceInDb.inventory)) {
+                    cartItem.quantity = priceInDb.inventory;
+                  };
+                  updatedCartItems.push(cartItem);
+                  cartStateData.push({ 
+                    ...priceInDb, 
+                    name: shopItemInDb.name, 
+                    featuredImageId: shopItemInDb.images[0].id,
+                    quantity: cartItem.quantity
+                  });
                 };
-                updatedCartItems.push(cartItem);
-                cartStateData.push({ 
-                  ...priceInDb, 
-                  name: shopItemInDb.name, 
-                  featuredImageId: shopItemInDb.images[0].id,
-                  quantity: cartItem.quantity
-                });
               };
             };
           });
@@ -140,41 +142,44 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
           <span className='my-2 text-lg font-medium'>
             {cartItem.name}
           </span>
+          <span className='text-sm opacity-70'>
+              {`$${cartItem.amount.toFixed(2)} each`}
+          </span>
           <div className='py-2 flex flex-row justify-start items-center'>
             <span>Quantity:</span>
-            <div className='h-min mx-2 bg-blue-50 bg-opacity-50 rounded-md flex flex-row justify-center items-center'>
-              <button
-                name='-'
-                onClick={() => handleQuantityButton(cartItem.id, '-')}
-                className='px-3 py-1 bg-blue-100 bg-opacity-50 rounded-md hover:bg-blue-200 transition-colors'
-              >
-                -
-              </button>
-              <span className='py-1 px-3'>
-                {cartItem.quantity}
-              </span>
-              <button
-                name='+'
-                onClick={() => handleQuantityButton(cartItem.id, '+')}
-                className='px-3 py-1 bg-blue-100 bg-opacity-50 rounded-md hover:bg-blue-200 transition-colors'
-              >
-                +
-              </button>
+            <div className='h-[2rem] flex flex-col justify-start items-center'>
+              <div className='h-[2rem] mx-2 bg-blue-50 bg-opacity-50 rounded-md flex flex-row justify-center items-center'>
+                <button
+                  name='-'
+                  onClick={() => handleQuantityButton(cartItem.id, '-')}
+                  className='px-3 py-1 bg-blue-100 bg-opacity-50 rounded-md hover:bg-blue-200 transition-colors'
+                >
+                  -
+                </button>
+                <span className='py-1 px-3'>
+                  {cartItem.quantity}
+                </span>
+                <button
+                  name='+'
+                  onClick={() => handleQuantityButton(cartItem.id, '+')}
+                  className='px-3 py-1 bg-blue-100 bg-opacity-50 rounded-md hover:bg-blue-200 transition-colors'
+                >
+                  +
+                </button>
+              </div>
+              {(cartItem.quantity === cartItem.inventory) && 
+              <span className='text-sm text-blue-900 opacity-50'>
+                {cartItem.inventory} in stock
+              </span>}
             </div>
-          </div>
-          <span>
             <span>
               {`$${(cartItem.amount * cartItem.quantity).toFixed(2)}`}
             </span>
-            {(cartItem.quantity > 1) &&
-            <span className='text-sm px-2 opacity-60'>
-              {`($${cartItem.amount.toFixed(2)} each)`}
-            </span>}
-          </span>
+          </div>
         </div>
       </div>)}
       {cartHasLoaded && (cartItemData.length > 0) &&
-      <div className='flex flex-col justify-start items-start'>
+      <div className=' self-end mr-4 flex flex-col justify-start items-start'>
         <div className='my-4 flex flex-row justify-start items-center'>
           <span>
             Total: ${getCartTotal()}

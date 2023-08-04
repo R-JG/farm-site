@@ -3,11 +3,11 @@ import { CartItem } from '@/utils/types';
 export const parseCartItemArray = (body: unknown): CartItem[] => {
   const errorMessage = 'Cart session request body is missing or contains incorrect data';
   const parseNumber = (prop: unknown): number => {
-    if (!prop || (typeof prop !== 'number')) throw new Error(errorMessage);
+    if (typeof prop !== 'number') throw new Error(errorMessage);
     return prop;
   };
   const parseString = (prop: unknown): string => {
-    if (!prop || (typeof prop !== 'string')) throw new Error(errorMessage);
+    if (typeof prop !== 'string') throw new Error(errorMessage);
     return prop;
   };
   const parseCartItem = (params: unknown): CartItem => {

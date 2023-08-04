@@ -20,10 +20,6 @@ const ShopItemPage = async ({ params }: Props) => {
 
   if (!itemData) return <div></div>;
 
-  const pricesInStock = itemData.price.filter(price => (
-    (price.inventory === null) || (price.inventory !== null) && (price.inventory > 0)
-  ));
-
   return (
     <main className='w-full p-12 flex flex-row justify-evenly items-start'>
       {(itemData.images.length <= 1)
@@ -45,13 +41,9 @@ const ShopItemPage = async ({ params }: Props) => {
           {itemData.name}
         </h1>
         <div className='w-full self-end'>
-          {(pricesInStock.length > 0) 
-          ? <ShopPriceInterface pricesInStock={pricesInStock} /> 
-          : <span className='p-2 bg-blue-200 rounded'>
-            Out of stock
-          </span>}
+          <ShopPriceInterface itemPrices={itemData.price} />
         </div>
-        <p className='whitespace-pre-line max-w-lg'>
+        <p className='whitespace-pre-line max-w-lg mt-4'>
           {itemData.description}
         </p>
       </div>

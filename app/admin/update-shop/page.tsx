@@ -59,9 +59,6 @@ const UpdateShopPage = async () => {
         };
       });
       priceObjectData.sort((a, b) => (a.amount - b.amount));
-
-      console.log('PRICE OBJECT DATA ---> ', priceObjectData);
-
       const [defaultPriceObject, ...additionalPriceObjects] = priceObjectData;
       const createdDbItem = await createShopItem(newItem);
       createdDbItemId = createdDbItem.id;
@@ -78,7 +75,7 @@ const UpdateShopPage = async () => {
         }
       });
       const stripeAdditionalPrices = await Promise.all(
-        additionalPriceObjects.map(price => stripe.prices.create({
+        additionalPriceObjects.map(async price => stripe.prices.create({
           product: createdStripeProduct.id,
           currency: 'cad',
           unit_amount: (price.amount * 100)
