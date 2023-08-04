@@ -3,7 +3,7 @@ import {
   BlogPost as BlogPost_PrismaSchema,
   ShopItem as ShopItem_PrismaSchema,
   NewsPostImage, ShopItemImage, BlogPostImage,
-  ShopItemPrice
+  ShopItemPrice as ShopItemPrice_PrismaSchema
 } from '@prisma/client';
 
 export type NewsPost = NewsPost_PrismaSchema & { images: NewsPostImage[] };
@@ -18,5 +18,7 @@ export type ShopItem = ShopItem_PrismaSchema & { price: ShopItemPrice[], images:
 
 export type NewShopItem = Omit<ShopItem, 'id' | 'createdAt' | 'updatedAt' | 'images' | 'price'>;
 
+export type ShopItemPrice = ShopItemPrice_PrismaSchema;
 
-export type CartItem = { shopItemId: string, quantity: number };
+
+export type CartItem = { priceId: string, shopItemId: string, quantity: number };

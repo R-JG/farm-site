@@ -1,28 +1,27 @@
 'use client';
 
 import { useState, useEffect, MouseEvent } from 'react';
-import { CartItem } from '@/utils/types';
+import { CartItem, ShopItemPrice } from '@/utils/types';
 import { parseCartItemArray } from '@/utils/validation';
 
 type Props = {
-  itemId: string,
-  itemInventory: number | null
+  shopItemPrice: ShopItemPrice
 };
 
-const AddToCartForm = ({ itemId, itemInventory }: Props) => {
+const AddToCartForm = ({ shopItemPrice }: Props) => {
 
   const [quantityInputValue, setQuantityInputValue] = useState(1);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const indexOfItemInCart = cartItems.findIndex(item => (item.shopItemId === itemId));
+  const indexOfItemInCart = cartItems.findIndex(item => (item.priceId === shopItemPrice.id));
 
   const handleQuantityButton = (e: MouseEvent<HTMLButtonElement>): void => {
     if (e.currentTarget.name === '+') {
       const newQuantity = quantityInputValue + 1;
-      if (itemInventory !== null) {
+      if (shopItemPrice.inventory !== null) {
         if (indexOfItemInCart === -1) {
-          if (newQuantity > itemInventory) return;
-        } else if ((cartItems[indexOfItemInCart].quantity + newQuantity) > itemInventory) {
+          if (newQuantity > shopItemPrice.inventory) return;
+        } else if ((cartItems[indexOfItemInCart].quantity + newQuantity) > shopItemPrice.inventory) {
           return;
         };
       };
@@ -34,11 +33,15 @@ const AddToCartForm = ({ itemId, itemInventory }: Props) => {
   };
 
   const handleAddToCartButton = (): void => {
-    if ((itemInventory === 0) || ((itemInventory !== null) && (indexOfItemInCart !== -1)
-    && ((cartItems[indexOfItemInCart].quantity + quantityInputValue) > itemInventory))) return;
+    if ((shopItemPrice.inventory === 0) || ((shopItemPrice.inventory !== null) && (indexOfItemInCart !== -1)
+    && ((cartItems[indexOfItemInCart].quantity + quantityInputValue) > shopItemPrice.inventory))) return;
     let updatedCart: CartItem[] = [...cartItems];
     if (indexOfItemInCart === -1) {
-      const newCartItem: CartItem = { shopItemId: itemId, quantity: quantityInputValue };
+      const newCartItem: CartItem = { 
+        priceId: shopItemPrice.id, 
+        shopItemId: shopItemPrice.shopItemId, 
+        quantity: quantityInputValue 
+      };
       updatedCart.push(newCartItem);
     } else {
       updatedCart[indexOfItemInCart].quantity += quantityInputValue;
@@ -46,7 +49,7 @@ const AddToCartForm = ({ itemId, itemInventory }: Props) => {
     const updatedIndexOfItemInCart = (
       (indexOfItemInCart === -1) ? (updatedCart.length - 1) : indexOfItemInCart
     );
-    if ((itemInventory !== null) && (updatedCart[updatedIndexOfItemInCart].quantity >= itemInventory)) {
+    if ((shopItemPrice.inventory !== null) && (updatedCart[updatedIndexOfItemInCart].quantity >= shopItemPrice.inventory)) {
       setQuantityInputValue(0);
     } else {
       setQuantityInputValue(1);
@@ -60,15 +63,15 @@ const AddToCartForm = ({ itemId, itemInventory }: Props) => {
     if (!cartStorage) return;
     let newCartState: CartItem[] = [];
     newCartState.push(...parseCartItemArray(JSON.parse(cartStorage)));
-    const indexOfItemInCartStorage = newCartState.findIndex(item => (item.shopItemId === itemId));
-    if ((indexOfItemInCartStorage !== -1) && (itemInventory !== null) && 
-    (newCartState[indexOfItemInCartStorage].quantity >= itemInventory)) {
-      newCartState[indexOfItemInCartStorage].quantity = itemInventory;
+    const indexOfPriceInCartStorage = newCartState.findIndex(item => (item.priceId === shopItemPrice.id));
+    if ((indexOfPriceInCartStorage !== -1) && (shopItemPrice.inventory !== null) && 
+    (newCartState[indexOfPriceInCartStorage].quantity >= shopItemPrice.inventory)) {
+      newCartState[indexOfPriceInCartStorage].quantity = shopItemPrice.inventory;
       localStorage.setItem('cart', JSON.stringify(newCartState));
       setQuantityInputValue(0);
     };
     setCartItems(newCartState);
-  }, [itemId, itemInventory]);
+  }, [shopItemPrice]);
 
   return (
     <div className='w-fit mx-2 flex flex-row justify-end items-center'>
@@ -92,12 +95,12 @@ const AddToCartForm = ({ itemId, itemInventory }: Props) => {
             +
           </button>
         </div>
-        {(itemInventory !== null) && (((itemInventory <= 5) && (itemInventory > 0)) || 
+        {(shopItemPrice.inventory !== null) && (((shopItemPrice.inventory <= 5) && (shopItemPrice.inventory > 0)) || 
         ((indexOfItemInCart !== -1) && 
-        ((cartItems[indexOfItemInCart].quantity + quantityInputValue) >= itemInventory)) || 
-        (quantityInputValue === itemInventory)) &&
+        ((cartItems[indexOfItemInCart].quantity + quantityInputValue) >= shopItemPrice.inventory)) || 
+        (quantityInputValue === shopItemPrice.inventory)) &&
         <span className='mt-2 text-blue-900 opacity-60'>
-          {itemInventory} in stock
+          {shopItemPrice.inventory} in stock
         </span>}
       </div>
       <div className='h-[2.5rem] flex flex-col justify-start items-center'>

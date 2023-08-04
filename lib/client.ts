@@ -29,7 +29,7 @@ const uploadFiles = async (
 export const createContent = async (
   publicUploadApiKey: string,
   publicUploadUrl: string, 
-  inputValues: object, 
+  inputKV: [k: string, v: string | null][], 
   inputFiles: File[],
   createSignature: () => Promise<null | { timestamp: number, signature: string }>, 
   createInDb: (data: FormData) => Promise<{ success: boolean }>
@@ -52,7 +52,7 @@ export const createContent = async (
     });
   }))); 
   let dbFormData = new FormData();
-  Object.entries(inputValues).forEach(([k, v]) => dbFormData.append(k, v ?? ''));
+  inputKV.forEach(([k, v]) => dbFormData.append(k, v ?? ''));
   imageIds.forEach(id => dbFormData.append('imageIds', id));
   return await createInDb(dbFormData);
 };

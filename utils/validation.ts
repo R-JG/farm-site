@@ -11,9 +11,13 @@ export const parseCartItemArray = (body: unknown): CartItem[] => {
     return prop;
   };
   const parseCartItem = (params: unknown): CartItem => {
-    if (!params || (typeof params !== 'object') 
+    if (!params || (typeof params !== 'object') || !('priceId' in params)
     || !('shopItemId' in params) || !('quantity' in params)) throw new Error(errorMessage);
-    return { shopItemId: parseString(params.shopItemId), quantity: parseNumber(params.quantity) };
+    return { 
+      priceId: parseString(params.priceId),
+      shopItemId: parseString(params.shopItemId), 
+      quantity: parseNumber(params.quantity) 
+    };
   };
   if (!Array.isArray(body)) throw new Error(errorMessage);
   return body.map(el => parseCartItem(el));

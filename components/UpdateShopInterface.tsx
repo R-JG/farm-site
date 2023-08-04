@@ -11,7 +11,7 @@ type Props = {
   createSignature: () => Promise<null | { timestamp: number, signature: string }>,
   createShopItem: (itemRequestData: FormData) => Promise<{ success: boolean }>,
   deleteShopItem: (itemId: string) => Promise<{ success: boolean }>,
-  updateItemInventory: (itemId: string, newInventory: number | null) => Promise<{ success: boolean, inventory?: number | null }>
+  updateItemInventory: (priceId: string, newInventory: number | null) => Promise<{ success: boolean, inventory?: number | null }>
 };
 
 const UpdateShopInterface = ({ 
@@ -31,6 +31,7 @@ const UpdateShopInterface = ({
   const [itemToEditId, setItemToEditId] = useState<string | null>(null);
   const [itemIsBeingEdited, setItemIsBeingEdited] = useState<boolean>(false);
   const [inventoryInputValue, setInventoryInputValue] = useState('');
+  const [selectedPriceId, setSelectedPriceId] = useState('');
 
   const handleCreateModeButton = (): void => {
     (interfaceMode !== 'create') ? setInterfaceMode('create') : setInterfaceMode('none')
@@ -42,10 +43,11 @@ const UpdateShopInterface = ({
     setItemToDeleteId(itemId);
   };
 
-  const handleEditModeButton = (itemId: string): void => {
+  const handleEditModeButton = (itemId: string, priceId: string): void => {
     if (itemIsBeingEdited) return;
     setInterfaceMode('edit');
     setItemToEditId(itemId);
+    setSelectedPriceId(priceId);
   };
 
   const handleCancelDeleteButton = (): void => {
@@ -56,6 +58,7 @@ const UpdateShopInterface = ({
   const handleCancelEditButton = (): void => {
     setInterfaceMode('none');
     setItemToEditId(null);
+    setSelectedPriceId('');
   };
 
   const handleDeleteItemButton = async (): Promise<void> => {
@@ -84,7 +87,7 @@ const UpdateShopInterface = ({
     setItemIsBeingEdited(true);
     try {
       const newInventory: number | null = (inventoryInputValue === '') ? null : Number(inventoryInputValue);
-      const updateResult = await updateItemInventory(itemToEditId, newInventory);
+      const updateResult = await updateItemInventory(selectedPriceId, newInventory);
       if (!updateResult.success) {
         throw new Error(`Server error in updating the inventory for item ${itemToDeleteId}`);
       };
@@ -96,6 +99,7 @@ const UpdateShopInterface = ({
       setInterfaceMode('none');
       setItemIsBeingEdited(false);
       setInventoryInputValue('');
+      setSelectedPriceId('');
     };
   };
 
@@ -131,7 +135,9 @@ const UpdateShopInterface = ({
       </div>}
       {(interfaceMode !== 'create') && 
       <div className='py-4 border-t-2 border-black flex flex-col justify-start items-center'>
-        <p className='mb-4 text-xl font-medium'>Current items on the shop page:</p>
+        <p className='mb-4 text-xl font-medium'>
+          Current items on the shop page:
+        </p>
         <div className='flex flex-row justify-start items-start flex-wrap'>
           {allShopItems.map(item => 
           <div 
@@ -141,15 +147,21 @@ const UpdateShopInterface = ({
             <span className='text-lg font-medium mb-2'>
               {item.name}
             </span>
-            <p className='max-w-sm line-clamp-3'>
+            <p className='max-w-sm mb-4 line-clamp-3'>
               {item.description}
             </p>
-            <span className='font-medium mt-4'>
-              Current inventory:
-              <span className='mx-2'>
-                {item.inventory ?? 'unlimited'}
+            {item.price.map(price => 
+            <div
+              key={price.id}
+              className='flex flex-row'
+            >
+              <span className='mr-8'>
+                {`$${price.amount.toFixed(2)}`}
               </span>
-            </span>
+              <span>
+                {`Inventory: ${price.inventory ?? 'unlimited'}`}
+              </span>
+            </div>)}
             <div className='self-center flex flex-row justify-center items-center'>
               <div>
                 {((interfaceMode === 'edit') && (item.id === itemToEditId)) &&
@@ -162,8 +174,21 @@ const UpdateShopInterface = ({
                   </p>
                   <form
                     onSubmit={handleUpdateInventoryForm}
-                    className=''
+                    className='h-fit'
                   >
+                    {item.price.map(price => 
+                    <label 
+                      key={price.id}
+                      className='m-1'
+                    >
+                      {`$${price.amount.toFixed(2)}`}
+                      <input 
+                        type='radio'
+                        name='price'
+                        value={price.id}
+                        onClick={() => setSelectedPriceId(price.id)}
+                      />
+                    </label>)}
                     {!itemIsBeingEdited && 
                     <input 
                       type='number'
@@ -187,7 +212,7 @@ const UpdateShopInterface = ({
                 {!(interfaceMode === 'delete' && item.id === itemToDeleteId) &&
                 !(interfaceMode === 'edit' && item.id === itemToEditId) &&
                 <button
-                  onClick={() => handleEditModeButton(item.id)}
+                  onClick={() => handleEditModeButton(item.id, item.price[0].id)}
                   className='p-2 m-4 bg-blue-200 rounded active:bg-blue-100 hover:scale-105 transition-all'
                 >
                   Update Inventory

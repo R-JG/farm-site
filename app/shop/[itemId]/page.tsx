@@ -1,7 +1,7 @@
 import { getAllShopItemIds, getShopItemById } from '@/lib/database';
 import ContentImage from '@/components/ContentImage';
 import ThumbnailGallery from '@/components/ThumbnailGallery';
-import AddToCartForm from '@/components/AddToCartForm';
+import ShopPriceInterface from '@/components/ShopPriceInterface';
 
 type Props = {
   params: { itemId: string }
@@ -19,6 +19,10 @@ const ShopItemPage = async ({ params }: Props) => {
   const itemData = await getShopItemById(params.itemId);
 
   if (!itemData) return <div></div>;
+
+  const pricesInStock = itemData.price.filter(price => (
+    (price.inventory === null) || (price.inventory !== null) && (price.inventory > 0)
+  ));
 
   return (
     <main className='w-full p-12 flex flex-row justify-evenly items-start'>
@@ -40,30 +44,12 @@ const ShopItemPage = async ({ params }: Props) => {
         <h1 className='text-xl font-semibold mb-3'>
           {itemData.name}
         </h1>
-        <div className='w-full mb-8 flex flex-row justify-between items-center'>
-          <div className='flex flex-row justify-start items-center flex-wrap'>
-            {(itemData.price.length === 1) &&
-            <span>
-              {`$${itemData.price[0].amount.toFixed(2)}`}
-            </span>}
-            {(itemData.price.length > 1) &&
-            itemData.price.map((price, index) => 
-            <span
-              key={price.id}
-              style={(index === 0) ? { borderColor: '#bfdbfe' } : undefined}
-              className='p-1 rounded-xl border-[0.2rem] border-transparent'
-            >
-              {`$${price.amount.toFixed(2)}`}
-            </span>)}
-          </div>
-          {(itemData.inventory === 0) 
-          ? <span className='p-2 bg-blue-200 rounded'>
+        <div className='w-full self-end'>
+          {(pricesInStock.length > 0) 
+          ? <ShopPriceInterface pricesInStock={pricesInStock} /> 
+          : <span className='p-2 bg-blue-200 rounded'>
             Out of stock
-          </span>
-          : <AddToCartForm 
-            itemId={itemData.id} 
-            itemInventory={itemData.inventory}
-          />}
+          </span>}
         </div>
         <p className='whitespace-pre-line max-w-lg'>
           {itemData.description}

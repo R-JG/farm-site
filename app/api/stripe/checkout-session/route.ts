@@ -19,6 +19,7 @@ export const POST = async (request: NextRequest): Promise<Response> => {
     if (!allCartItemsExist) {
       return new NextResponse('Some cart items do not exist', { status: 500 });
     };
+    /*
     let line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     await Promise.all(dbItems.map(async dbItem => {
       const stripeProduct = await stripe.products.retrieve(dbItem.id);
@@ -29,6 +30,8 @@ export const POST = async (request: NextRequest): Promise<Response> => {
       const quantity = cartItems.find(cartItem => (cartItem.shopItemId === dbItem.id))?.quantity ?? 1;
       line_items.push({ price, quantity });
     }));
+    */
+    const line_items = cartItems.map(cartItem => ({ price: cartItem.priceId, quantity: cartItem.quantity }));
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,

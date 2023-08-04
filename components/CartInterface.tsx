@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ShopItem, CartItem } from '@/utils/types';
+import { ShopItem, ShopItemPrice, CartItem } from '@/utils/types';
 import { parseCartItemArray } from '@/utils/validation';
 import ContentImage from './ContentImage';
+
+type CartItemData = ShopItemPrice & { name: string, featuredImageId: string, quantity: number };
 
 type Props = {
   origin: 'normal' | 'checkout-success',
@@ -17,14 +19,14 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
 
   const [cartHasLoaded, setCartHasLoaded] = useState(false);
   const [orderIsProcessing, setOrderIsProcessing] = useState(false);
-  const [shopItemsInCart, setShopItemsInCart] = useState<(ShopItem & { quantity: number })[]>([]);
+  const [cartItemData, setCartItemData] = useState<CartItemData[]>([]);
 
   const router = useRouter();
 
   const getCartTotal = (): string => {
     let total = 0;
-    for (const shopItem of shopItemsInCart) {
-      total += (shopItem.price[0].amount * shopItem.quantity);
+    for (const cartItem of cartItemData) {
+      total += (cartItem.amount * cartItem.quantity);
     };
     return total.toFixed(2);
   };
@@ -33,12 +35,14 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
     if (orderIsProcessing) return;
     setOrderIsProcessing(true);
     try {
-      const cartItemData: CartItem[] = shopItemsInCart.map(item => (
-        { shopItemId: item.id, quantity: item.quantity }
-      ));
+      const checkoutData: CartItem[] = cartItemData.map(item => ({ 
+        priceId: item.id,
+        shopItemId: item.shopItemId, 
+        quantity: item.quantity 
+      }));
       const response = await fetch(`${baseUrl}/api/stripe/checkout-session`, { 
         method: 'POST', 
-        body: JSON.stringify(cartItemData)
+        body: JSON.stringify(checkoutData)
       });
       const redirectUrl = await response.text();
       router.push(redirectUrl);
@@ -49,28 +53,30 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
     };
   };
 
-  const handleQuantityButton = (itemId: string, operation: '+' | '-'): void => {
-    const targetItemIndex = shopItemsInCart.findIndex(item => (item.id === itemId));
-    let updatedShopItems: (ShopItem & { quantity: number })[] = [...shopItemsInCart];
+  const handleQuantityButton = (priceId: string, operation: '+' | '-'): void => {
+    const cartItemIndex = cartItemData.findIndex(item => (item.id === priceId));
+    const cartItem = cartItemData[cartItemIndex];
+    let updatedCartItems: CartItemData[] = [...cartItemData];
     if (operation === '+') {
-      const itemInventory = shopItemsInCart[targetItemIndex].inventory;
-      if ((itemInventory !== null) && ((updatedShopItems[targetItemIndex].quantity + 1) > itemInventory)) {
+      if ((cartItem.inventory !== null) && ((cartItem.quantity + 1) > cartItem.inventory)) {
         return;
       };
-      updatedShopItems[targetItemIndex].quantity++;
+      updatedCartItems[cartItemIndex].quantity++;
     };
     if (operation === '-') {
-      if (updatedShopItems[targetItemIndex].quantity <= 1) {
-        updatedShopItems.splice(targetItemIndex, 1);
+      if (cartItem.quantity <= 1) {
+        updatedCartItems.splice(cartItemIndex, 1);
       } else {
-        updatedShopItems[targetItemIndex].quantity--;
+        updatedCartItems[cartItemIndex].quantity--;
       };
     };
-    const updatedCartStorage: CartItem[] = updatedShopItems.map(item => (
-      { shopItemId: item.id, quantity: item.quantity }
-    ));
+    const updatedCartStorage: CartItem[] = updatedCartItems.map(item => ({ 
+      priceId: item.id, 
+      shopItemId: item.shopItemId, 
+      quantity: item.quantity 
+    }));
     localStorage.setItem('cart', JSON.stringify(updatedCartStorage));
-    setShopItemsInCart(updatedShopItems);
+    setCartItemData(updatedCartItems);
   };
 
   useEffect(() => {
@@ -81,24 +87,30 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
         findShopItemsForCart(cartStorageItems.map(item => item.shopItemId))
         .then(shopItemsInDb => {
           let updatedCartItems: CartItem[] = [];
-          let shopItemDataForCart: (ShopItem & { quantity: number })[] = [];
+          let cartStateData: CartItemData[] = [];
           cartStorageItems.forEach(cartItem => {
-            const itemInDb = shopItemsInDb.find(shopItem => (shopItem.id === cartItem.shopItemId));
-            if (itemInDb && (itemInDb.inventory !== 0)) {
-              if ((itemInDb.inventory !== null) && (cartItem.quantity > itemInDb.inventory)) {
-                cartItem.quantity = itemInDb.inventory;
+            const shopItemInDb = shopItemsInDb.find(shopItem => (shopItem.id === cartItem.shopItemId));
+            if (shopItemInDb) {
+              const priceInDb = shopItemInDb.price.find(price => (price.id === cartItem.priceId));
+              if (priceInDb) {
+                if ((priceInDb.inventory !== null) && (cartItem.quantity > priceInDb.inventory)) {
+                  cartItem.quantity = priceInDb.inventory;
+                };
+                updatedCartItems.push(cartItem);
+                cartStateData.push({ 
+                  ...priceInDb, 
+                  name: shopItemInDb.name, 
+                  featuredImageId: shopItemInDb.images[0].id,
+                  quantity: cartItem.quantity
+                });
               };
-              updatedCartItems.push(cartItem);
-              shopItemDataForCart.push({ ...itemInDb, quantity: cartItem.quantity });
             };
           });
           localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-          setShopItemsInCart(shopItemDataForCart);
-          setCartHasLoaded(true);
+          setCartItemData(cartStateData);
         });
-      } else {
-        setCartHasLoaded(true);
       };
+      setCartHasLoaded(true);
     };
     if (origin === 'checkout-success') {
       localStorage.removeItem('cart');
@@ -109,15 +121,15 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
   if (origin === 'checkout-success') return (<div></div>);
 
   return (
-    <div className={`h-full p-9 rounded-2xl flex flex-col justify-start items-start ${(cartHasLoaded && (shopItemsInCart.length > 0)) && ' border-2 border-black '}`}>
-      {shopItemsInCart.map(shopItem => 
+    <div className={`h-full p-9 rounded-2xl flex flex-col justify-start items-start ${(cartHasLoaded && (cartItemData.length > 0)) && ' border-2 border-black '}`}>
+      {cartItemData.map(cartItem => 
       <div
-        key={shopItem.id}
+        key={cartItem.id}
         className='my-2 flex flex-row justify-start items-center'
       >
         <div className='relative w-[10vw] aspect-square'>
           <ContentImage 
-            src={shopItem.images[0].id}
+            src={cartItem.featuredImageId}
             alt=''
             fill={true}
             sizes='(max-width: 640px) 20vw,10vw'
@@ -126,24 +138,24 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
         </div>
         <div className='m-4 flex flex-col justify-center items-start'>
           <span className='my-2 text-lg font-medium'>
-            {shopItem.name}
+            {cartItem.name}
           </span>
           <div className='py-2 flex flex-row justify-start items-center'>
             <span>Quantity:</span>
             <div className='h-min mx-2 bg-blue-50 bg-opacity-50 rounded-md flex flex-row justify-center items-center'>
               <button
                 name='-'
-                onClick={() => handleQuantityButton(shopItem.id, '-')}
+                onClick={() => handleQuantityButton(cartItem.id, '-')}
                 className='px-3 py-1 bg-blue-100 bg-opacity-50 rounded-md hover:bg-blue-200 transition-colors'
               >
                 -
               </button>
               <span className='py-1 px-3'>
-                {shopItem.quantity}
+                {cartItem.quantity}
               </span>
               <button
                 name='+'
-                onClick={() => handleQuantityButton(shopItem.id, '+')}
+                onClick={() => handleQuantityButton(cartItem.id, '+')}
                 className='px-3 py-1 bg-blue-100 bg-opacity-50 rounded-md hover:bg-blue-200 transition-colors'
               >
                 +
@@ -152,16 +164,16 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
           </div>
           <span>
             <span>
-              {`$${(shopItem.price[0].amount * shopItem.quantity).toFixed(2)}`}
+              {`$${(cartItem.amount * cartItem.quantity).toFixed(2)}`}
             </span>
-            {(shopItem.quantity > 1) &&
+            {(cartItem.quantity > 1) &&
             <span className='text-sm px-2 opacity-60'>
-              {`($${shopItem.price[0].amount.toFixed(2)} each)`}
+              {`($${cartItem.amount.toFixed(2)} each)`}
             </span>}
           </span>
         </div>
       </div>)}
-      {cartHasLoaded && (shopItemsInCart.length > 0) &&
+      {cartHasLoaded && (cartItemData.length > 0) &&
       <div className='flex flex-col justify-start items-start'>
         <div className='my-4 flex flex-row justify-start items-center'>
           <span>
@@ -178,7 +190,7 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
           *All prices are in Canadian dollars.
         </span>
       </div>}
-      {cartHasLoaded && (shopItemsInCart.length === 0) && 
+      {cartHasLoaded && (cartItemData.length === 0) && 
       <div className='flex flex-col justify-start items-center'>
         <span className='my-4'>
           Your cart is currently empty

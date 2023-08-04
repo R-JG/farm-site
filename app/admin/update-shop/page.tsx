@@ -10,7 +10,7 @@ import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_URL } from '@/utils/config
 import { 
   getUserByEmail, getAllShopItems, getShopItemById, createShopItem, 
   createShopItemImage, deleteShopItemById, deleteAllShopItemImagesByItemId, 
-  updateShopItemInventoryById, createShopItemPrice, deleteAllShopItemPricesByItemId 
+  updateShopItemInventoryByPriceId, createShopItemPrice, deleteAllShopItemPricesByItemId 
 } from '@/lib/database';
 
 const UpdateShopPage = async () => {
@@ -30,40 +30,39 @@ const UpdateShopPage = async () => {
   const createItem = async (itemUploadData: FormData): Promise<{ success: boolean }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
-    let uploadedImageIds: string[] = [];
     let createdDbItemId: string | undefined;
+    let uploadedImageIds: string[] = [];
     try {
       const formDataArray = Array.from(itemUploadData);
       let newItem: NewShopItem = {
         name: '',
         description: '',
-        inventory: null
       }; 
-      let itemPriceData: number[] = [];
+      let priceObjectData: { amount: number, inventory: number | null }[] = [];
       formDataArray.forEach(([k, v]) => {
         if (k === 'price') {
-          const priceValues = v.toString().trim().split(/\s+/);
-          priceValues.forEach(value => {
-            const price = Number(value);
-            if (!Number.isNaN(price)) itemPriceData.push(price);
-          });
-          if (itemPriceData.length === 0) {
+          const [priceAmount, priceInventory] = v.toString().split(/\s+/);
+          const priceObjectEntry = { 
+            amount: Number(priceAmount), 
+            inventory: priceInventory ? Number(priceInventory) : null 
+          };  
+          if (Number.isNaN(priceObjectEntry.amount) || 
+          ((priceObjectEntry.inventory !== null) && Number.isNaN(priceObjectEntry.inventory))) {
             throw new Error('Missing valid price data for shop item creation');
+          } else {
+            priceObjectData.push(priceObjectEntry);
           };
-        } else if (k === 'inventory') {
-          const inventoryValue: number | null = (v === '') ? null : Number(v);
-          newItem[k] = inventoryValue;
         } else if ((k in newItem) && (typeof v === 'string')) {
           newItem[k as keyof Omit<NewShopItem, 'inventory'>] = v;
         } else if ((k === 'imageIds') && (typeof v === 'string')) {
           uploadedImageIds.push(v);
         };
       });
+      priceObjectData.sort((a, b) => (a.amount - b.amount));
 
-      console.log('ITEM PRICE DATA ---> ', itemPriceData);
+      console.log('PRICE OBJECT DATA ---> ', priceObjectData);
 
-      itemPriceData.sort();
-      const [defaultPriceAmount, ...additionalPriceAmounts] = itemPriceData;
+      const [defaultPriceObject, ...additionalPriceObjects] = priceObjectData;
       const createdDbItem = await createShopItem(newItem);
       createdDbItemId = createdDbItem.id;
       const createdStripeProduct = await stripe.products.create({ 
@@ -75,23 +74,29 @@ const UpdateShopPage = async () => {
         ),
         default_price_data: {
           currency: 'cad',
-          unit_amount: (defaultPriceAmount * 100)
+          unit_amount: (defaultPriceObject.amount * 100)
         }
       });
       const stripeAdditionalPrices = await Promise.all(
-        additionalPriceAmounts.map(price => stripe.prices.create({
+        additionalPriceObjects.map(price => stripe.prices.create({
           product: createdStripeProduct.id,
           currency: 'cad',
-          unit_amount: (price * 100)
+          unit_amount: (price.amount * 100)
         }))
       );
       console.log('Created a new Stripe product: ', createdStripeProduct);
-      const dbDefaultPrice = createShopItemPrice(
-        createdDbItem.id, String(createdStripeProduct.default_price), defaultPriceAmount
+      const dbDefaultPrice = createShopItemPrice( 
+        String(createdStripeProduct.default_price), 
+        createdDbItem.id, 
+        defaultPriceObject.amount, 
+        defaultPriceObject.inventory
       );
-      const dbAdditionalPrices = stripeAdditionalPrices.map((price, index) => 
-        createShopItemPrice(createdDbItem.id, price.id, additionalPriceAmounts[index])
-      );
+      const dbAdditionalPrices = stripeAdditionalPrices.map((price, index) => createShopItemPrice(
+        price.id, 
+        createdDbItem.id, 
+        additionalPriceObjects[index].amount, 
+        additionalPriceObjects[index].inventory
+      ));
       const dbItemImages = uploadedImageIds.map((id, index) => 
         createShopItemImage(id, createdDbItem.id, (index + 1))
       );
@@ -132,16 +137,16 @@ const UpdateShopPage = async () => {
   };
 
   const updateItemInventory = async (
-    itemId: string, 
+    priceId: string, 
     newInventory: number | null
   ): Promise<{ success: boolean, inventory?: number | null }> => {
     'use server';
     if (sessionUser?.role !== 'ADMIN') return { success: false };
     try {
-      const updatedShopItem = await updateShopItemInventoryById(itemId, newInventory);
+      const updatedPriceObject = await updateShopItemInventoryByPriceId(priceId, newInventory);
       revalidatePath('/shop');
       revalidatePath('/admin/update-shop');
-      return { success: true, inventory: updatedShopItem.inventory };
+      return { success: true, inventory: updatedPriceObject.inventory };
     } catch (error) {
       console.error(error);
       return { success: false };

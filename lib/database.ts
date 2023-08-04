@@ -63,8 +63,8 @@ export const createShopItemImage = async (imageId: string, shopItemId: string, o
   data: { id: imageId, shopItemId, order }
 });
 
-export const createShopItemPrice = async (shopItemId: string, stripeId: string, amount: number) => prisma.shopItemPrice.create({
-  data: { shopItemId, stripeId, amount }
+export const createShopItemPrice = async (priceId: string, shopItemId: string, amount: number, inventory: number | null) => prisma.shopItemPrice.create({
+  data: { id: priceId, shopItemId, amount, inventory }
 });
 
 export const deleteShopItemById = async (id: string) => prisma.shopItem.delete({ 
@@ -79,13 +79,13 @@ export const deleteAllShopItemImagesByItemId = async (shopItemId: string) => pri
   where: { shopItemId } 
 });
 
-export const updateShopItemInventoryById = async (shopItemId: string, newInventory: number | null) => prisma.shopItem.update({
-  where: { id: shopItemId },
+export const updateShopItemInventoryByPriceId = async (priceId: string, newInventory: number | null) => prisma.shopItemPrice.update({
+  where: { id: priceId },
   data: { inventory: newInventory }
 });
 
-export const decrementShopItemInventoryById = async (shopItemId: string, amountToDecrease: number) => prisma.shopItem.update({ 
-  where: { id: shopItemId }, 
+export const decrementShopItemInventoryByPriceId = async (priceId: string, amountToDecrease: number) => prisma.shopItemPrice.update({ 
+  where: { id: priceId }, 
   data: { inventory: { decrement: amountToDecrease } } 
 });
 

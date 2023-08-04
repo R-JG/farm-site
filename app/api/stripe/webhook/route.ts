@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import stripe from '@/utils/stripe';
-import { decrementShopItemInventoryById } from '@/lib/database';
+import { decrementShopItemInventoryByPriceId } from '@/lib/database';
 import { STRIPE_WEBHOOK_SECRET } from '@/utils/config';
 
 export const POST = async (request: NextRequest): Promise<Response> => {
@@ -18,9 +18,8 @@ export const POST = async (request: NextRequest): Promise<Response> => {
       );
       if (expandedSession.line_items) {
         const inventoryUpdates = await Promise.all(expandedSession.line_items.data.map(async lineItem => {
-          if (!lineItem.quantity || !lineItem.price || 
-          (typeof lineItem.price.product !== 'string')) return;
-          return decrementShopItemInventoryById(lineItem.price.product, lineItem.quantity);
+          if (!lineItem.quantity || !lineItem.price) return;
+          return decrementShopItemInventoryByPriceId(lineItem.price.id, lineItem.quantity);
         }));
         console.log('The following inventory updates have been applied: ', inventoryUpdates);
       };
