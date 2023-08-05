@@ -44,14 +44,14 @@ model ShopItemPrice {
   amount       Float
   inventory    Int?
   shopItemId   String
-  shopItem     ShopItem  @relation(fields: [shopItemId], references: [id])
+  shopItem     ShopItem  @relation(fields: [shopItemId], references: [id], onDelete: Cascade)
 }
 
 model ShopItemImage {
   id           String    @id
   order        Int
   shopItemId   String
-  shopItem     ShopItem  @relation(fields: [shopItemId], references: [id])
+  shopItem     ShopItem  @relation(fields: [shopItemId], references: [id], onDelete: Cascade)
 }
 
 model NewsPostImage {
