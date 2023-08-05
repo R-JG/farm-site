@@ -94,10 +94,10 @@ const UpdateShopPage = async () => {
         additionalPriceObjects[index].amount, 
         additionalPriceObjects[index].inventory
       ));
-      const dbItemImages = uploadedImageIds.map((id, index) => 
+      await Promise.all([dbDefaultPrice, dbAdditionalPrices]);
+      await Promise.all(uploadedImageIds.map((id, index) => 
         createShopItemImage(id, createdDbItem.id, (index + 1))
-      );
-      await Promise.all([dbDefaultPrice, dbAdditionalPrices, dbItemImages]);
+      ));
       revalidatePath('/shop');
       revalidatePath('/admin/update-shop');
       return { success: true };
