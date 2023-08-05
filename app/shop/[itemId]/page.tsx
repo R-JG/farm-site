@@ -1,7 +1,7 @@
 import { getAllShopItemIds, getShopItemById } from '@/lib/database';
 import ContentImage from '@/components/ContentImage';
 import ThumbnailGallery from '@/components/ThumbnailGallery';
-import AddToCartForm from '@/components/AddToCartForm';
+import ShopPriceInterface from '@/components/ShopPriceInterface';
 
 type Props = {
   params: { itemId: string }
@@ -40,20 +40,10 @@ const ShopItemPage = async ({ params }: Props) => {
         <h1 className='text-xl font-semibold mb-3'>
           {itemData.name}
         </h1>
-        <div className='w-full mb-8 flex flex-row justify-between items-center'>
-          <span>
-            {`$${itemData.price.toFixed(2)}`}
-          </span>
-          {(itemData.inventory === 0) 
-          ? <span className='p-2 bg-blue-200 rounded'>
-            Out of stock
-          </span>
-          : <AddToCartForm 
-            itemId={itemData.id} 
-            itemInventory={itemData.inventory}
-          />}
+        <div className='w-full self-end'>
+          <ShopPriceInterface itemPrices={itemData.price} />
         </div>
-        <p className='whitespace-pre-line max-w-lg'>
+        <p className='whitespace-pre-line max-w-lg mt-4'>
           {itemData.description}
         </p>
       </div>

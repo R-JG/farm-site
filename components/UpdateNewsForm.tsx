@@ -46,7 +46,12 @@ const UpdateNewsForm = ({
     setIsSubmitting(true);
     try {
       const response = await createContent(
-        publicUploadApiKey, publicUploadUrl, inputValues, inputFiles, createSignature, createInDb
+        publicUploadApiKey, 
+        publicUploadUrl, 
+        Object.entries(inputValues), 
+        inputFiles, 
+        createSignature, 
+        createInDb
       );
       if (response.success) {
         setPromptState({ message: 'Successfully created a new post', success: true });

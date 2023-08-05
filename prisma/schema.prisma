@@ -11,8 +11,7 @@ model ShopItem {
   id           String    @id @default(cuid())
   name         String
   description  String
-  price        Float
-  inventory    Int?
+  price        ShopItemPrice[]
   images       ShopItemImage[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -40,11 +39,19 @@ model BlogPost {
   updatedAt    DateTime  @updatedAt
 }
 
+model ShopItemPrice {
+  id           String    @id
+  amount       Float
+  inventory    Int?
+  shopItemId   String
+  shopItem     ShopItem  @relation(fields: [shopItemId], references: [id], onDelete: Cascade)
+}
+
 model ShopItemImage {
   id           String    @id
   order        Int
   shopItemId   String
-  shopItem     ShopItem  @relation(fields: [shopItemId], references: [id])
+  shopItem     ShopItem  @relation(fields: [shopItemId], references: [id], onDelete: Cascade)
 }
 
 model NewsPostImage {

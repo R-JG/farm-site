@@ -7,6 +7,11 @@ type Props = {
 };
 
 const ShopItemPreview = ({ itemData }: Props) => {
+
+  const pricesInStock = itemData.price.filter(price => (
+    (price.inventory === null) || ((price.inventory !== null) && (price.inventory > 0))
+  ));
+
   return (
     <div className='h-fit w-fit mb-6 mx-6'>
       <Link 
@@ -23,11 +28,21 @@ const ShopItemPreview = ({ itemData }: Props) => {
             className='object-cover rounded-md shadow'
           />}
         </div>
-        <h1 className='w-52 my-2 font-medium'>{itemData.name}</h1>
+        <h1 className='w-52 my-2 font-medium'>
+          {itemData.name}
+        </h1>
         <div className='flex flex-row'>
-          <p>{`$${itemData.price.toFixed(2)}`}</p>
-          {(itemData.inventory === 0) && 
-          <span className='text-sm py-1 px-2 mx-4 bg-blue-200 rounded-md'>
+          <div className='max-w-[13rem] flex flex-row flex-wrap'>
+            {(pricesInStock.length > 0) && itemData.price.map(price => 
+            <span
+              key={price.id}
+              className='mr-4'
+            >
+              {`$${price.amount.toFixed(2)}`}
+            </span>)}
+          </div>
+          {(pricesInStock.length === 0) && 
+          <span className='text-sm py-1 px-2 bg-blue-200 rounded-md'>
             Out of stock
           </span>}
         </div>
