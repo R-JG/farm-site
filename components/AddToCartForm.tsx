@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect, MouseEvent } from 'react';
 import { CartItem, ShopItemPrice } from '@/utils/types';
 import { parseCartItemArray } from '@/utils/validation';
@@ -118,9 +119,17 @@ const AddToCartForm = ({ shopItemPrice }: Props) => {
             Add To Cart
           </button>
           {(indexOfItemInCart !== -1) && (cartItems[indexOfItemInCart].quantity > 0) && 
-          <span className='block text-blue-900 py-1 px-2 mx-3 opacity-60'>
-            {cartItems[indexOfItemInCart].quantity} in cart
-          </span>}
+          <div className='relative flex flex-row'>
+            <span className='block text-blue-900 py-1 px-2 mx-3 opacity-60'>
+              {cartItems[indexOfItemInCart].quantity} in cart
+            </span>
+            <Link
+              href='/cart'
+              className='absolute left-[6.8rem] bottom-[2rem] h-[2.5rem] w-[6rem] flex flex-col justify-center items-center border-2 border-blue-900 text-blue-900 opacity-60 rounded hover:scale-105 active:opacity-100 transition-all'
+            >
+              Go To Cart
+            </Link>
+          </div>}
         </div>
       </div>}
       {(shopItemPrice.inventory === 0) && 

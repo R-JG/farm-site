@@ -36,7 +36,7 @@ const ShopItemPreview = ({ itemData }: Props) => {
             {(pricesInStock.length > 0) && itemData.price.map(price => 
             <span
               key={price.id}
-              className='mr-4'
+              className='mr-3'
             >
               {`$${price.amount.toFixed(2)}`}
             </span>)}
