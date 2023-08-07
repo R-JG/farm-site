@@ -31,7 +31,7 @@ const NewsletterForm = ({ addNewsletterSubscriber }: Props) => {
   return (
     <form 
       onSubmit={handleFormSubmit}
-      className='min-w-[26rem] flex flex-col'
+      className='min-w-[26rem] pl-10 flex flex-col'
     >
       <span className='mb-1'>
         Subscribe to our newsletter!
