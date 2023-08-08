@@ -1,5 +1,7 @@
+import Image from 'next/image';
 import NewsletterForm from './NewsletterForm';
 import IconLink from './IconLink';
+import EFAOMemberLogo from '@/public/EFAO-member-logo.png';
 import facebookIcon from '@/public/icon--facebook.svg';
 import instagramIcon from '@/public/icon--instagram.svg';
 import { MAILERLITE_API_KEY } from '@/utils/config';
@@ -28,7 +30,12 @@ const Footer = () => {
   };
 
   return (
-    <footer className='w-full pt-10 pb-7 bg-blue-50 flex flex-row justify-evenly items-start'>
+    <footer className='w-full h-fit pt-10 pb-7 bg-blue-50 flex flex-row justify-evenly items-start'>
+      <Image 
+        src={EFAOMemberLogo}
+        alt='EFAO member'
+        className=' w-28 aspect-square'
+      />
       <NewsletterForm 
         addNewsletterSubscriber={addNewsletterSubscriber} 
       />
