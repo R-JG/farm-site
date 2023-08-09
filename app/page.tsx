@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Slideshow from '@/components/Slideshow';
 import NewsColumnPost from '@/components/NewsColumnPost';
 import bgOne from '@/public/bg--home-1.png';
 import wheelbarrow from '@/public/graphic--wheelbarrow-2.png';
