@@ -68,11 +68,13 @@ const AddToCartForm = ({ shopItemPrice }: Props) => {
     if ((indexOfPriceInCartStorage !== -1) && (shopItemPrice.inventory !== null)) {
       if (shopItemPrice.inventory === 0) {
         newCartState.splice(indexOfPriceInCartStorage, 1);
+        localStorage.setItem('cart', JSON.stringify(newCartState));
+        setQuantityInputValue(0);
       } else if (newCartState[indexOfPriceInCartStorage].quantity >= shopItemPrice.inventory) {
         newCartState[indexOfPriceInCartStorage].quantity = shopItemPrice.inventory;
+        localStorage.setItem('cart', JSON.stringify(newCartState));
+        setQuantityInputValue(0);
       };
-      localStorage.setItem('cart', JSON.stringify(newCartState));
-      setQuantityInputValue(0);
     } else if (shopItemPrice.inventory === 0) {
       setQuantityInputValue(0);
     };

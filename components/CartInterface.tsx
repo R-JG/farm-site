@@ -82,7 +82,7 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
   useEffect(() => {
     if (origin === 'normal') {
       const cartStorage = localStorage.getItem('cart');
-      if (cartStorage) {
+      if (cartStorage !== null) {
         const cartStorageItems = parseCartItemArray(JSON.parse(cartStorage));
         findShopItemsForCart(cartStorageItems.map(item => item.shopItemId))
         .then(shopItemsInDb => {
@@ -110,9 +110,11 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
           });
           localStorage.setItem('cart', JSON.stringify(updatedCartItems));
           setCartItemData(cartStateData);
+          setCartHasLoaded(true);
         });
+      } else {
+        setCartHasLoaded(true);
       };
-      setCartHasLoaded(true);
     };
     if (origin === 'checkout-success') {
       localStorage.removeItem('cart');
