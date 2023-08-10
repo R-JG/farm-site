@@ -9,7 +9,7 @@ type Props = {
 
 const NewsColumnPost = ({ postData, layoutMode }: Props) => {
   return (
-    <div className={`w-full mb-24 bg-blue-50 flex ${(layoutMode === 1) ? 'flex-row pl-24' : 'flex-row-reverse pr-24'} justify-between items-center`}>
+    <div className={`w-full mb-24 bg-blue-50 opacity-90 flex ${(layoutMode === 1) ? 'flex-row pl-24' : 'flex-row-reverse pr-24'} justify-between items-center`}>
       <div className='w-1/2 py-8 flex flex-row justify-center items-center'>
         <div className=' min-w-[20rem] flex flex-col justify-center items-start'>
           <h1 className='text-2xl font-medium mb-6 border-b-2 border-black'>{postData.title}</h1>
