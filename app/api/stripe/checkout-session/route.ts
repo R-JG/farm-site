@@ -1,9 +1,8 @@
-import Stripe from 'stripe';
 import stripe from '@/utils/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllShopItemsByIds } from '@/lib/database';
 import { parseCartItemArray } from '@/utils/validation';
-import { BASE_URL } from '@/utils/config';
+import { BASE_URL, ENABLE_STRIPE_TAX } from '@/utils/config';
 
 export const POST = async (request: NextRequest): Promise<Response> => {
   try {
@@ -24,7 +23,8 @@ export const POST = async (request: NextRequest): Promise<Response> => {
       mode: 'payment',
       line_items,
       success_url: `${BASE_URL}/cart/success`,
-      cancel_url: `${BASE_URL}/cart`
+      cancel_url: `${BASE_URL}/cart`,
+      automatic_tax: { enabled: ENABLE_STRIPE_TAX }
     });
     if (!session.url) {
       return new NextResponse('Error in creating a checkout session', { status: 500 });
