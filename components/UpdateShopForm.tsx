@@ -27,6 +27,7 @@ const UpdateShopForm = ({
   const [inputValues, setInputValues] = useState<ShopItemRequest>(baseInputValues);
   const [inputFiles, setInputFiles] = useState<File[]>([]);
   const [inputPriceObjects, setInputPriceObjects] = useState<{ amount: string, inventory: string }[]>([{ amount: '', inventory: '' }]);
+  const [includeTax, setIncludeTax] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -63,6 +64,7 @@ const UpdateShopForm = ({
       for (const kvPair of priceInputKVs) {
         valuesForFormData.push(kvPair);
       };
+      valuesForFormData.push(['tax', (includeTax ? 'true' : 'false')]);
       const response = await createContent(
         publicUploadApiKey, 
         publicUploadUrl, 
@@ -82,6 +84,7 @@ const UpdateShopForm = ({
     } finally {
       setInputValues(baseInputValues);
       setInputPriceObjects([{ amount: '', inventory: '' }]);
+      setIncludeTax(false);
       setIsSubmitting(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
@@ -98,6 +101,9 @@ const UpdateShopForm = ({
         <p>The images are hosted on Cloudinary, and with the current free plan, the maximum size for a single file is 10mb. So if the image file is larger the post will not be created. You can reduce the file size of an image with an image editing program, or there is probably even a website that you can use for this purpose.</p>
         <p>When uploading multiple images, I don&apos;t think that there is any limit to the collective size of all the files.</p>
         <p>Also, the image will be formatted to fit into a square on the site, so if the image in the file is not a square, it will get cropped. The best thing to do would be to crop it yourself with an image editing program to make sure that it displays the way that you want.</p>
+        <p className='font-semibold'>For tax:</p>
+        <p>Checking the box will override the default tax category (this can be viewed in Stripe&apos;s tax settings — currently it is Food for Non-Immediate Consumption, which is untaxed)</p> 
+        <p>When checked, it will set it instead to: General - Tangible Goods (Stripe tax code: txcd_99999999).</p>
       </div>
       <form 
         onSubmit={handleSubmit}
@@ -110,6 +116,7 @@ const UpdateShopForm = ({
             name='name'
             value={inputValues.name}
             onChange={handleInputChange} 
+            className='ml-2'
           />
         </label>
         <label className='pb-4'>
@@ -119,6 +126,7 @@ const UpdateShopForm = ({
             name='description'
             value={inputValues.description}
             onChange={handleInputChange} 
+            className='ml-2'
           />
         </label>
         <label className='pb-4'>
@@ -131,6 +139,16 @@ const UpdateShopForm = ({
             name='imageFile'
             onChange={handleFileInputChange} 
             ref={fileInputRef}
+            className='ml-2'
+          />
+        </label>
+        <label>
+          Add tax to the item?
+          <input
+            type='checkbox'
+            checked={includeTax}
+            onChange={e => setIncludeTax(e.currentTarget.checked)}
+            className='ml-2'
           />
         </label>
         {inputPriceObjects.map((priceObject, index) => 
@@ -146,6 +164,7 @@ const UpdateShopForm = ({
               name='amount'
               value={priceObject.amount}
               onChange={e => handlePriceObjectInputChange(e, index)} 
+              className='mx-2'
             />
           </label>
           <label className='pb-4'>
@@ -155,6 +174,7 @@ const UpdateShopForm = ({
               name='inventory'
               value={priceObject.inventory}
               onChange={e => handlePriceObjectInputChange(e, index)} 
+              className='ml-2'
             />
           </label>
           <button

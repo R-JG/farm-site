@@ -39,6 +39,7 @@ const UpdateShopPage = async () => {
         description: '',
       }; 
       let priceObjectData: { amount: number, inventory: number | null }[] = [];
+      let stripeTaxCode: string | undefined;
       formDataArray.forEach(([k, v]) => {
         if (k === 'price') {
           const [priceAmount, priceInventory] = v.toString().split(/\s+/);
@@ -52,6 +53,8 @@ const UpdateShopPage = async () => {
           } else {
             priceObjectData.push(priceObjectEntry);
           };
+        } else if ((k === 'tax') && (v === 'true')) {
+          stripeTaxCode = 'txcd_99999999';
         } else if ((k in newItem) && (typeof v === 'string')) {
           newItem[k as keyof Omit<NewShopItem, 'inventory'>] = v;
         } else if ((k === 'imageIds') && (typeof v === 'string')) {
@@ -72,7 +75,8 @@ const UpdateShopPage = async () => {
         default_price_data: {
           currency: 'cad',
           unit_amount: (defaultPriceObject.amount * 100)
-        }
+        },
+        tax_code: stripeTaxCode
       });
       const stripeAdditionalPrices = await Promise.all(
         additionalPriceObjects.map(async price => stripe.prices.create({
