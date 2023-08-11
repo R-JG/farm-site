@@ -26,5 +26,7 @@ export const STRIPE_API_SECRET = process.env.STRIPE_API_SECRET ?? '';
 
 export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? '';
 
+export const ENABLE_STRIPE_TAX = (process.env.ENABLE_STRIPE_TAX === 'true');
+
 
 export const MAILERLITE_API_KEY = process.env.MAILERLITE_API_KEY ?? '';
