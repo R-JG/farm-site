@@ -16,14 +16,14 @@ const HeaderRouteLink = ({ children, route }: Props) => {
   const isCurrentPage = (pathname === route);
 
   return (
-    <div className='flex flex-col justify-center items-center hover:scale-110 transition-transform duration-100'>
+    <div className='min-w-[2.25rem] mt-6 sm:mt-0 mx-0 sm:mx-4 flex flex-col justify-center items-center hover:scale-110 transition-transform duration-100'>
       <Link 
         href={route} 
-        className='mx-4 font-medium'
+        className='font-medium'
       >
         {children}
       </Link>
-      <div className={`${isCurrentPage ? 'w-9' : 'w-0'} h-0.5 bg-amber-600 rounded transition-all duration-75`}></div>
+      <div className={`${isCurrentPage ? 'w-[2.25rem]' : 'w-0'} h-0.5 bg-amber-600 rounded transition-all duration-75`}></div>
     </div>
   );
 };

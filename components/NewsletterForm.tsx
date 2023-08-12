@@ -31,7 +31,7 @@ const NewsletterForm = ({ addNewsletterSubscriber }: Props) => {
   return (
     <form 
       onSubmit={handleFormSubmit}
-      className='min-w-[26rem] pl-10 flex flex-col'
+      className='sm:min-w-[26rem] sm:pl-10 flex flex-col'
     >
       <span className='mb-1'>
         Subscribe to our newsletter!
@@ -42,7 +42,7 @@ const NewsletterForm = ({ addNewsletterSubscriber }: Props) => {
           placeholder='Email address' 
           value={emailInputValue}
           onChange={handleInputChange}
-          className='p-1 mr-3 border-blue-100 border-2 rounded'
+          className='max-w-[10rem] sm:max-w-fit p-1 mr-3 border-blue-100 border-2 rounded'
         />
         <button className='p-2 bg-blue-200 rounded active:bg-blue-300 hover:scale-105 transition-all'>
           {buttonText}

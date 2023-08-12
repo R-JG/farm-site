@@ -17,8 +17,8 @@ const ShopPriceInterface = ({ itemPrices }: Props) => {
   if (!selectedPrice) return <div></div>;
 
   return (
-    <div className='w-full mb-8 flex flex-row justify-between items-center'>
-      <div className='flex flex-row justify-start items-center flex-wrap'>
+    <div className='w-full mb-4 sm:mb-8 flex flex-col sm:flex-row justify-between items-center'>
+      <div className='mb-6 sm:mb-0 flex flex-row justify-start items-center flex-wrap'>
         {(itemPrices.length === 1) &&
         <span>
           {`$${itemPrices[0].amount.toFixed(2)}`}

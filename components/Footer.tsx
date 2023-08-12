@@ -30,18 +30,20 @@ const Footer = () => {
   };
 
   return (
-    <footer className='w-full h-fit pt-10 pb-7 bg-blue-50 flex flex-row justify-evenly items-start'>
-      <Image 
-        src={efaoMemberLogo}
-        alt='EFAO member'
-        className=' w-28 aspect-square'
-      />
+    <footer className='w-full h-fit pt-10 pb-7 bg-blue-50 flex flex-col sm:flex-row justify-evenly items-center sm:items-start'>
+      <div className='hidden sm:inline'>
+        <Image 
+          src={efaoMemberLogo}
+          alt='EFAO member'
+          className=' w-28 aspect-square'
+        />
+      </div>
       <NewsletterForm 
         addNewsletterSubscriber={addNewsletterSubscriber} 
       />
-      <div className='ml-10 flex flex-row justify-center items-start'>
-        <div className='mr-12 flex flex-col'>
-          <span className=' text-lg mb-1'>
+      <div className='w-full sm:w-fit mt-7 sm:mt-0 sm:ml-10 flex flex-col sm:flex-row justify-center items-center sm:items-start'>
+        <div className='sm:mr-12 flex flex-col'>
+          <span className='text-lg mb-1'>
             Contact us:
           </span>
           <span className='italic'>
@@ -50,11 +52,11 @@ const Footer = () => {
           <span className='italic'>
             (416) 817-2132
           </span>
-          <span className='mt-5'>
+          <span className='mt-2 sm:mt-5'>
             5122 4th Line  Erin, Ontario  L7J 2L8
           </span>
         </div>
-        <div className='ml-8 flex flex-col justify-center items-start'>
+        <div className='mt-8 sm:mt-0 sm:ml-8 flex flex-col justify-center items-start'>
           <span className='text-lg ml-2 '>
             Follow us:
           </span>

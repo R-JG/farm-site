@@ -102,8 +102,10 @@ const UpdateShopForm = ({
         <p>When uploading multiple images, I don&apos;t think that there is any limit to the collective size of all the files.</p>
         <p>Also, the image will be formatted to fit into a square on the site, so if the image in the file is not a square, it will get cropped. The best thing to do would be to crop it yourself with an image editing program to make sure that it displays the way that you want.</p>
         <p className='font-semibold'>For tax:</p>
-        <p>Checking the box will override the default tax category (this can be viewed in Stripe&apos;s tax settings — currently it is Food for Non-Immediate Consumption, which is untaxed)</p> 
+        <p>Checking the box will override the default tax category (this can be viewed in Stripe&apos;s tax settings — currently it is Food for Non-Immediate Consumption, which is untaxed).</p> 
         <p>When checked, it will set it instead to: General - Tangible Goods (Stripe tax code: txcd_99999999).</p>
+        <p className='font-semibold'>For inventory:</p>
+        <p>Leave the input blank for an unlimited inventory.</p>
       </div>
       <form 
         onSubmit={handleSubmit}

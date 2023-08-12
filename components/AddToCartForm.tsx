@@ -84,7 +84,7 @@ const AddToCartForm = ({ shopItemPrice }: Props) => {
   return (
     <div className='h-[2.5rem] mx-2 flex flex-row justify-end items-center'>
       {((shopItemPrice.inventory === null) || (shopItemPrice.inventory > 0)) &&
-      <div className='w-fit flex flex-row justify-end items-center'>
+      <div className='w-fit flex flex-row justify-center sm:justify-end items-center'>
         <div className='h-[2rem] flex flex-col justify-start items-center'>
           <div className='h-[2rem] mx-2 bg-blue-50 bg-opacity-50 rounded-md flex flex-row justify-center items-center'>
             <button
@@ -127,7 +127,7 @@ const AddToCartForm = ({ shopItemPrice }: Props) => {
             </span>
             <Link
               href='/cart'
-              className='absolute left-[6.8rem] bottom-[2rem] h-[2.5rem] w-[6rem] flex flex-col justify-center items-center border-2 border-blue-900 text-blue-900 opacity-60 rounded hover:scale-105 active:opacity-100 transition-all'
+              className='absolute left-[6.8rem] bottom-[0] sm:bottom-[2rem] sm:h-[2.5rem] sm:w-[6rem] p-1 flex flex-col justify-center items-center border-2 border-blue-900 text-blue-900 opacity-60 rounded hover:scale-105 active:opacity-100 transition-all'
             >
               Go To Cart
             </Link>

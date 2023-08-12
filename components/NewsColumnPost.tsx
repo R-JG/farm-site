@@ -9,11 +9,15 @@ type Props = {
 
 const NewsColumnPost = ({ postData, layoutMode }: Props) => {
   return (
-    <div className={`w-full mb-24 bg-blue-50 opacity-90 flex ${(layoutMode === 1) ? 'flex-row pl-24' : 'flex-row-reverse pr-24'} justify-between items-center`}>
-      <div className='w-1/2 py-8 flex flex-row justify-center items-center'>
-        <div className=' min-w-[20rem] flex flex-col justify-center items-start'>
-          <h1 className='text-2xl font-medium mb-6 border-b-2 border-black'>{postData.title}</h1>
-          <p className='text-lg leading-6 my-1'>{postData.content}</p>
+    <div className={`w-full pb-6 sm:pb-0 mb-24 bg-blue-50 opacity-90 flex flex-col ${(layoutMode === 1) ? 'sm:flex-row sm:pl-24' : 'sm:flex-row-reverse sm:pr-24'} justify-between items-center`}>
+      <div className='w-3/4 sm:w-1/2 py-8 flex flex-row justify-center items-center'>
+        <div className=' sm:min-w-[20rem] flex flex-col justify-center items-center sm:items-start'>
+          <h1 className='text-2xl font-medium mb-6 border-b-2 border-black'>
+            {postData.title}
+          </h1>
+          <p className='text-lg leading-6 my-1'>
+            {postData.content}
+          </p>
           {postData.link && 
           <Link 
             href={postData.link}
@@ -24,7 +28,7 @@ const NewsColumnPost = ({ postData, layoutMode }: Props) => {
           </Link>}
         </div>
       </div>
-      <div className='relative w-[40vw] aspect-square grid place-content-center overflow-hidden'>
+      <div className='relative w-[90vw] sm:w-[40vw] aspect-square grid place-content-center overflow-hidden'>
         <ContentImage 
           src={postData.images[0].id} 
           alt=''

@@ -14,8 +14,8 @@ const CartPage = async () => {
   };
 
   return (
-    <main className='py-9 px-16 flex-grow flex flex-row justify-start items-center'>
-      <div className='w-[50%] px-10 flex flex-col justify-start items-center'>
+    <main className='py-9 px-8 sm:px-16 flex-grow flex flex-col sm:flex-row justify-start items-center'>
+      <div className='sm:w-[50%] sm:px-10 flex flex-col justify-start items-center'>
         <h1 className='text-2xl font-medium mb-3'>
           Cart:
         </h1>
@@ -25,7 +25,7 @@ const CartPage = async () => {
           findShopItemsForCart={findShopItemsForCart}
         />
       </div>
-      <div className='w-[50%] flex flex-col justify-center items-center opacity-70'>
+      <div className='hidden sm:w-[50%] sm:flex flex-col justify-center items-center opacity-70'>
         <Image 
           src={graphic}
           alt=''
