@@ -21,9 +21,9 @@ const ShopItemPage = async ({ params }: Props) => {
   if (!itemData) return <div></div>;
 
   return (
-    <main className='w-full p-12 flex flex-row justify-evenly items-start'>
+    <main className='w-full p-6 sm:p-12 flex flex-col sm:flex-row justify-evenly items-center sm:items-start'>
       {(itemData.images.length <= 1)
-      ? <div className='relative w-[30vw] aspect-square'>
+      ? <div className='relative w-[90vw] sm:w-[30vw] aspect-square'>
         <ContentImage 
           src={itemData.images[0].id} 
           alt=''
@@ -36,14 +36,14 @@ const ShopItemPage = async ({ params }: Props) => {
         imageType='admin-content'
         images={itemData.images.map(image => image.id)}
       />}
-      <div className='min-w-[30rem] p-4 mr-12 mt-16 flex flex-col justify-start items-start'>
+      <div className='sm:min-w-[30rem] p-4 sm:mr-12 mt-4 sm:mt-16 flex flex-col justify-start items-start'>
         <h1 className='text-xl font-semibold mb-3'>
           {itemData.name}
         </h1>
-        <div className='w-full self-end'>
+        <div className='w-full sm:self-end'>
           <ShopPriceInterface itemPrices={itemData.price} />
         </div>
-        <p className='whitespace-pre-line max-w-lg mt-4'>
+        <p className='whitespace-pre-line max-w-lg mt-6 sm:mt-4 mb-8 sm:mb-0'>
           {itemData.description}
         </p>
       </div>

@@ -4,13 +4,13 @@ import lizAndJohn from '@/public/liz-and-john.webp';
 const About = () => {
   return (
     <main>
-      <div className='m-4 flex flex-row justify-center items-start'>
+      <div className='m-4 flex flex-col sm:flex-row justify-center items-center sm:items-start'>
         <Image 
           src={lizAndJohn} 
           alt='Liz and John'
-          className='max-w-[36rem] m-9 rounded-2xl' 
+          className='max-w-[28rem] sm:max-w-[36rem] m-6 sm:m-9 rounded-2xl' 
         />
-        <div className='mt-12 ml-8 flex flex-col'>
+        <div className='sm:mt-12 mx-4 sm:ml-8 flex flex-col'>
           <div className='max-w-lg'>
             <h1 className='text-2xl font-medium mb-3'>
               Meet Liz & John
@@ -40,14 +40,14 @@ const About = () => {
           </div>
         </div>
       </div>
-      <div className='w-[100vw] py-4 mt-6 bg-blue-200 flex flex-row justify-center items-center'>
+      <div className='w-[100vw] py-4 sm:mt-6 bg-blue-200 flex flex-col sm:flex-row justify-center items-center'>
         <iframe 
           width='560' 
           height='315' 
           src='https://www.youtube.com/embed/Zqm1Hja2s70' 
           title='YouTube video player' 
           allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' 
-          className='my-8 ml-8 mr-4 rounded-lg'
+          className='w-[90vw] sm:w-[560px] my-4 sm:my-8 sm:ml-8 sm:mr-4 rounded-lg'
         >
         </iframe>
         <iframe 
@@ -56,7 +56,7 @@ const About = () => {
           src='https://www.youtube.com/embed/OQkVViOf42E' 
           title='YouTube video player' 
           allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' 
-          className='my-8 mr-8 ml-4 rounded-lg'
+          className='w-[90vw] sm:w-[560px] my-4 sm:my-8 sm:mr-8 sm:ml-4 rounded-lg'
         >
         </iframe>
       </div>

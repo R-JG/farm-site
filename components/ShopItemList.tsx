@@ -7,7 +7,7 @@ type Props = {
 
 const ShopItemList = async ({ allShopItems }: Props) => {
   return (
-    <div className='w-fit p-12 grid grid-cols-4 place-content-center'>
+    <div className='w-fit p-6 sm:p-12 flex flex-col sm:grid grid-cols-4 place-content-center'>
       {allShopItems.map((item: any) => 
       <ShopItemPreview 
         key={item.id}

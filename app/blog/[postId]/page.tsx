@@ -17,7 +17,7 @@ const BlogPostPage = async ({ params }: Props) => {
 
   return (
     <main className='p-6 flex-grow flex flex-col justify-start items-center bg-blue-200'>
-      <div className='w-[55vw] p-12 rounded-xl flex flex-col justify-start items-start bg-blue-100'>
+      <div className='sm:w-[55vw] p-8 sm:p-12 rounded-xl flex flex-col justify-start items-start bg-blue-100'>
         <h1 className='text-xl font-medium mb-2'>
           {postData.title}
         </h1>
@@ -28,7 +28,7 @@ const BlogPostPage = async ({ params }: Props) => {
         <p className='whitespace-pre-line'>
           {postData.content}
         </p>
-        <hr className='w-[35vw] my-12 border-[0.07rem] border-slate-800 opacity-70 self-center' />
+        <hr className='w-[50vw] sm:w-[35vw] my-10 sm:my-12 border-[0.07rem] border-slate-800 opacity-70 self-center' />
       </div>
     </main>
   );

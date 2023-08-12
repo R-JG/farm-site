@@ -23,18 +23,18 @@ const Home = async () => {
           />
         </div>
       </div>
-      <div className='h-[90vh] w-full  flex flex-col justify-start items-center'>
-        <div className='w-[67%] px-11 py-4 mt-[8rem] bg-blue-50 bg-opacity-90 rounded-2xl shadow-md flex flex-row justify-evenly items-center'>
-          <p className='w-[68%]'>
-            <span className='block text-2xl italic text-emerald-700'>
+      <div className='h-[90vh] w-full flex flex-col justify-start items-center'>
+        <div className='w-[90%] sm:w-[67%] px-11 py-6 sm:py-4 mt-[4rem] sm:mt-[8rem] bg-blue-50 bg-opacity-90 rounded-2xl shadow-md flex flex-col sm:flex-row justify-evenly items-center'>
+          <p className='sm:w-[68%]'>
+            <span className='sm:block text-2xl italic text-emerald-700'>
               Coyote Song Farm & Forest
             </span>
-            <span className='block text-2xl  pb-2'>
+            <span className='sm:block text-2xl  pb-2'>
               {'  is a small scale '}
               <span className='italic text-emerald-700'>market garden farm</span>
               {' in Erin, Ontario...'}
             </span>
-            <span className='block text-sm'>
+            <span className='block text-sm mt-3 sm:mt-0'>
               growing fresh produce and flowers according to organic principles with a focus on the development of healthy living soil. We offer a small CSA, flower subscriptions and farm stay camping experiences.
             </span>
           </p>

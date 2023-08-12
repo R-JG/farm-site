@@ -8,7 +8,7 @@ type Props = {
 const BlogPostList = async ({ allBlogPosts }: Props) => {
 
   return (
-    <div className='p-6 flex flex-row justify-center items-start'>
+    <div className='p-6 flex flex-col sm:flex-row justify-center items-center sm:items-start'>
       {allBlogPosts.map(post => 
       <BlogPostPreview 
         key={post.id} 

@@ -125,18 +125,18 @@ const CartInterface = ({ origin, baseUrl, findShopItemsForCart }: Props) => {
   if (origin === 'checkout-success') return (<div></div>);
 
   return (
-    <div className={`h-full p-9 rounded-2xl flex flex-col justify-start items-start ${(cartHasLoaded && (cartItemData.length > 0)) && ' border-2 border-black '}`}>
+    <div className={`w-[90vw] sm:w-fit sm:h-full p-6 sm:p-9 rounded-2xl flex flex-col justify-start items-center sm:items-start ${(cartHasLoaded && (cartItemData.length > 0)) && ' border-2 border-black '}`}>
       {cartItemData.map(cartItem => 
       <div
         key={cartItem.id}
-        className='my-2 flex flex-row justify-start items-center'
+        className='my-3 sm:my-2 flex flex-col sm:flex-row justify-start items-center'
       >
-        <div className='relative w-[10vw] aspect-square'>
+        <div className='relative w-[50vw] sm:w-[10vw] aspect-square'>
           <ContentImage 
             src={cartItem.featuredImageId}
             alt=''
             fill={true}
-            sizes='(max-width: 640px) 20vw,10vw'
+            sizes='(max-width: 640px) 50vw,10vw'
             className='object-cover rounded-md shadow'
           />
         </div>

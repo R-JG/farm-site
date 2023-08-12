@@ -7,7 +7,7 @@ type Props = {
 
 const BlogPostPreview = ({ postData }: Props) => {
   return (
-    <div className='w-[24rem] m-6 border-2 rounded-xl border-black hover:scale-105 transition-all cursor-pointer'>
+    <div className='sm:w-[24rem] m-6 border-2 rounded-xl border-black hover:scale-105 transition-all cursor-pointer'>
       <Link 
         href={`/blog/${postData.id}`}
         className='w-full h-full p-8 flex flex-col justify-start items-start overflow-hidden '

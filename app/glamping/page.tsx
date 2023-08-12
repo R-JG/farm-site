@@ -9,12 +9,12 @@ import glampingFive from '@/public/glamping--5.webp';
 
 const GlampingPage = () => {
   return (
-    <main className=' p-9 flex flex-row justify-center items-center'>
+    <main className='p-9 flex flex-col sm:flex-row justify-center items-center'>
       <ThumbnailGallery 
         imageType='static-import'
         images={[glampingOne, glampingTwo, glampingThree, glampingFour, glampingFive]}
       />
-      <div className='w-[35vw] mx-10 mb-20'>
+      <div className='sm:w-[35vw] sm:mx-10 mb-10 sm:mb-20 mt-5 sm:mt-0'>
         <h1 className='text-2xl font-medium mb-4 '>
           Camp in comfort on the farm!
         </h1>
@@ -25,7 +25,7 @@ const GlampingPage = () => {
           href='https://www.airbnb.ca/rooms/52457042'
           target='_blank'
         >
-          <div className=' text-lg font-medium h-fit w-fit p-2 my-8 rounded-lg bg-blue-50 flex flex-row justify-center items-center hover:scale-105 transition-all'>
+          <div className='text-lg font-medium h-fit w-fit p-2 my-8 rounded-lg bg-blue-50 flex flex-row justify-center items-center hover:scale-105 transition-all'>
             <span className='m-2'>
               Book on Airbnb
             </span>
