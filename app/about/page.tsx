@@ -3,7 +3,7 @@ import lizAndJohn from '@/public/liz-and-john.webp';
 
 const About = () => {
   return (
-    <main>
+    <main className='overflow-x-hidden'>
       <div className='m-4 flex flex-col sm:flex-row justify-center items-center sm:items-start'>
         <Image 
           src={lizAndJohn} 

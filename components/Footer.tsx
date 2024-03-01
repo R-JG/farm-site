@@ -11,12 +11,12 @@ const Footer = () => {
   const addNewsletterSubscriber = async (email: string): Promise<void> => {
     'use server';
     try {
-      const response = await fetch('https://api.mailerlite.com/api/v2/subscribers', { 
+      const response = await fetch('https://connect.mailerlite.com/api/subscribers', { 
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-MailerLite-ApiKey': `${MAILERLITE_API_KEY}` 
+          'Authorization': `Bearer ${MAILERLITE_API_KEY}` 
         },
         body: JSON.stringify({ email })
       });
